@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_save, post_init
 from django.dispatch import receiver
-from django.utils.datetime_safe import datetime
+from django.utils import timezone
 
 
 class Supplier(models.Model):
@@ -39,7 +39,10 @@ class Product(models.Model):
     description = models.TextField(blank=True)
 
     def __unicode__(self):
-        return ' '.join((unicode(self.category) if self.category else '', unicode(self.manufacturer) if self.manufacturer else '', self.name,))
+        return ' '.join((
+            unicode(self.category) if self.category else '', unicode(self.manufacturer) if self.manufacturer else '',
+            self.name))
+
 
 class Price(models.Model):
     supplier = models.ForeignKey(Supplier)
@@ -47,19 +50,19 @@ class Price(models.Model):
     price = models.FloatField()
 
     def __unicode__(self):
-        return ' '.join((self.supplier, self.product, self.price,))
+        return ' '.join((unicode(self.supplier), unicode(self.product), unicode(self.price)))
 
 
 class Purchase(models.Model):
     manager = models.ForeignKey(User)
     supplier = models.ForeignKey(Supplier)
     due = models.DateField()
-    closed = models.DateTimeField(blank=True)
+    closed = models.DateTimeField(blank=True, null=True)
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((self.supplier, self.manager, self.due,))
+        return ' '.join((unicode(self.supplier), unicode(self.manager), unicode(self.due)))
 
     class Meta:
         ordering = ["created"]
@@ -72,7 +75,7 @@ class Order(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((self.purchase, self.customer, self.price,))
+        return ' '.join((unicode(self.purchase), unicode(self.customer), unicode(self.created)))
 
     class Meta:
         ordering = ["created"]
@@ -85,7 +88,7 @@ class Transfer(models.Model):
     created = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((self.order, self.customer, self.amount,))
+        return ' '.join((unicode(self.order), unicode(self.customer), unicode(self.amount)))
 
     class Meta:
         ordering = ["created"]
@@ -99,7 +102,7 @@ class Item(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((self.order, self.created, self.price, self.amount,))
+        return ' '.join((unicode(self.order), unicode(self.price), unicode(self.amount)))
 
     class Meta:
         ordering = ["created"]
@@ -107,11 +110,13 @@ class Item(models.Model):
 
 @receiver(pre_save, weak=False)
 def date_pre_save(sender, **kwargs):
-    if isinstance(sender, (Purchase, Order, Item)):
-        sender.updated = datetime()
+    if sender in (Purchase, Order, Item):
+        instance = kwargs["instance"]
+        instance.updated = timezone.now()
 
 
 @receiver(post_init, weak=False)
 def date_post_init(sender, **kwargs):
-    if isinstance(sender, (Purchase, Order, Item, Transfer)):
-        sender.created = datetime()
+    instance = kwargs["instance"]
+    if sender in (Purchase, Order, Item, Transfer) and not instance.created:
+        instance.created = timezone.now()
