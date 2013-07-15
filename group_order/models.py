@@ -1,23 +1,39 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import pre_save, post_init
 from django.dispatch import receiver
 from django.utils import timezone
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
+
+class Person(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_('user'))
+    first_name = models.CharField(_('first name'), max_length=30, blank=True)
+    middle_name = models.CharField(_('middle name'), max_length=30, blank=True)
+    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+
+    def get_full_name(self):
+        return ' '.join(filter(lambda x: len(x), map(lambda x: x.strip().capitalize(),
+                                                     (self.first_name.strip() or self.user.first_name, self.middle_name,
+                                                      self.last_name.strip() or self.user.last_name)))) or self.user.name
+
+    def __unicode__(self):
+        return self.get_full_name()
 
 
 class Supplier(models.Model):
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20, blank=True)
-    address = models.TextField(blank=True)
-    description = models.TextField(blank=True)
+    name = models.CharField(_('name'), max_length=100)
+    phone = models.CharField(_('phone'), max_length=20, blank=True)
+    address = models.TextField(_('address'), blank=True)
+    description = models.TextField(_('description'), blank=True)
 
     def __unicode__(self):
         return self.name
 
 
 class Manufacturer(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    name = models.CharField(_('name'), max_length=100)
+    description = models.TextField(_('description'), blank=True)
 
     def __unicode__(self):
         return self.name
@@ -25,39 +41,41 @@ class Manufacturer(models.Model):
 
 class Category(models.Model):
     upper = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    name = models.CharField(_('name'), max_length=100)
+    description = models.TextField(_('description'), blank=True)
 
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = _('categories')
+
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.SET_NULL)
-    manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True, on_delete=models.SET_NULL)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    category = models.ForeignKey(Category, verbose_name=_('category'), blank=True, null=True, on_delete=models.SET_NULL)
+    manufacturer = models.ForeignKey(Manufacturer, verbose_name=_('manufacturer'), blank=True, null=True,
+                                     on_delete=models.SET_NULL)
+    name = models.CharField(_('name'), max_length=100)
+    description = models.TextField(_('description'), blank=True)
 
     def __unicode__(self):
-        return ' '.join((
-            unicode(self.category) if self.category else '', unicode(self.manufacturer) if self.manufacturer else '',
-            self.name))
+        return ' '.join(map(lambda x: unicode(x), filter(None, (self.category, self.manufacturer, self.name))))
 
 
 class Price(models.Model):
-    supplier = models.ForeignKey(Supplier)
-    product = models.ForeignKey(Product)
-    price = models.FloatField()
+    supplier = models.ForeignKey(Supplier, verbose_name=_('supplier'))
+    product = models.ForeignKey(Product, verbose_name=_('product'))
+    price = models.FloatField(_('price'))
 
     def __unicode__(self):
         return ' '.join((unicode(self.supplier), unicode(self.product), unicode(self.price)))
 
 
 class Purchase(models.Model):
-    manager = models.ForeignKey(User)
-    supplier = models.ForeignKey(Supplier)
-    due = models.DateField()
-    closed = models.DateTimeField(blank=True, null=True)
+    manager = models.ForeignKey(Person, verbose_name=_('manager'))
+    supplier = models.ForeignKey(Supplier, verbose_name=_('supplier'))
+    due = models.DateField(_('due date'))
+    closed = models.DateTimeField(_('close date'), blank=True, null=True)
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
@@ -69,22 +87,23 @@ class Purchase(models.Model):
 
 
 class Order(models.Model):
-    purchase = models.ForeignKey(Purchase)
-    customer = models.ForeignKey(User)
+    purchase = models.ForeignKey(Purchase, verbose_name=_('purchase'))
+    customer = models.ForeignKey(Person, verbose_name=_('customer'))
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((unicode(self.purchase), unicode(self.customer), unicode(self.created)))
+        return ' '.join((unicode(self.purchase), unicode(self.customer),
+                         timezone.localtime(self.created).strftime("%y-%m-%d")))
 
     class Meta:
         ordering = ["created"]
 
 
 class Transfer(models.Model):
-    customer = models.ForeignKey(User)
-    order = models.ForeignKey(Order)
-    amount = models.FloatField()
+    customer = models.ForeignKey(Person, verbose_name=_('customer'))
+    order = models.ForeignKey(Order, verbose_name=_('order'))
+    amount = models.FloatField(_('sum'))
     created = models.DateTimeField(editable=False)
 
     def __unicode__(self):
@@ -95,14 +114,16 @@ class Transfer(models.Model):
 
 
 class Item(models.Model):
-    order = models.ForeignKey(Order)
-    price = models.ForeignKey(Price)
-    amount = models.IntegerField()
+    order = models.ForeignKey(Order, verbose_name=_('order'))
+    product = models.ForeignKey(Price, verbose_name=_('product'))
+    amount = models.IntegerField(_('amount'))
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((unicode(self.order), unicode(self.price), unicode(self.amount)))
+        return ' '.join((
+            unicode(self.order), unicode(self.product), unicode(self.amount),
+            timezone.localtime(self.created).strftime("%H:%M:%S")))
 
     class Meta:
         ordering = ["created"]
