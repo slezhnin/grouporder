@@ -66,9 +66,14 @@ class Price(models.Model):
     supplier = models.ForeignKey(Supplier, verbose_name=_('supplier'))
     product = models.ForeignKey(Product, verbose_name=_('product'))
     price = models.FloatField(_('price'))
+    created = models.DateTimeField(editable=False)
+    updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
         return ' '.join((unicode(self.supplier), unicode(self.product), unicode(self.price)))
+
+    class Meta:
+        ordering = ["created"]
 
 
 class Purchase(models.Model):
@@ -117,12 +122,17 @@ class Item(models.Model):
     order = models.ForeignKey(Order, verbose_name=_('order'))
     product = models.ForeignKey(Price, verbose_name=_('product'))
     amount = models.IntegerField(_('amount'))
+    price = models.FloatField(_('sum'), editable=False)
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.price = self.amount * self.product.price
+        super(Item, self).save(force_insert, force_update, using, update_fields)
+
     def __unicode__(self):
         return ' '.join((
-            unicode(self.order), unicode(self.product), unicode(self.amount),
+            unicode(self.order), unicode(self.product), unicode(self.amount), unicode(self.price),
             timezone.localtime(self.created).strftime("%H:%M:%S")))
 
     class Meta:
@@ -131,7 +141,7 @@ class Item(models.Model):
 
 @receiver(pre_save, weak=False)
 def date_pre_save(sender, **kwargs):
-    if sender in (Purchase, Order, Item):
+    if sender in (Price, Purchase, Order, Item):
         instance = kwargs["instance"]
         instance.updated = timezone.now()
 
@@ -139,5 +149,5 @@ def date_pre_save(sender, **kwargs):
 @receiver(post_init, weak=False)
 def date_post_init(sender, **kwargs):
     instance = kwargs["instance"]
-    if sender in (Purchase, Order, Item, Transfer) and not instance.created:
+    if sender in (Price, Purchase, Order, Item, Transfer) and not instance.created:
         instance.created = timezone.now()
