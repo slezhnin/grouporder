@@ -17,6 +17,7 @@ class PriceInline(admin.TabularInline):
     model = Price
     extra = 1
 
+
 admin.site.register(Price)
 
 
@@ -28,6 +29,7 @@ class SupplierAdmin(admin.ModelAdmin):
     )
     inlines = (PriceInline,)
 
+
 admin.site.register(Supplier, SupplierAdmin)
 
 
@@ -35,6 +37,8 @@ admin.site.register(Supplier, SupplierAdmin)
 class TransferInline(admin.TabularInline):
     model = Transfer
     extra = 1
+
+
 admin.site.register(Transfer)
 
 
@@ -104,6 +108,7 @@ class ItemAdmin(admin.ModelAdmin):
     def get_changelist(self, request, **kwargs):
         return ItemSumChangeList
 
+
 admin.site.register(Item, ItemAdmin)
 
 
@@ -111,13 +116,12 @@ admin.site.register(Item, ItemAdmin)
 class OrderMixin:
     def order_sum(self, obj):
         return obj.order_sum
+
     order_sum.short_description = _('sum')
     order_sum.admin_order_field = 'order_sum'
 
-    def transfer_sum(self, obj):
-        return obj.transfer_sum
-    transfer_sum.short_description = _('paid')
-    transfer_sum.admin_order_field = 'transfer_sum'
+    def annotate_order(self, qs):
+        return qs.annotate(order_sum=Sum('item__price'))
 
 
 class OrderInline(admin.TabularInline, OrderMixin):
@@ -126,28 +130,28 @@ class OrderInline(admin.TabularInline, OrderMixin):
 
     def admin_link(self, instance):
         url = reverse('admin:%s_%s_change' % (
-            instance._meta.app_label,  instance._meta.module_name),  args=[instance.pk])
+            instance._meta.app_label, instance._meta.module_name), args=(instance.pk,))
         if instance.pk:
             return mark_safe(u'<a href="{u}">{e}</a>'.format(u=url, e=_('edit')))
         return ''
+
     admin_link.short_description = _('link')
 
-    readonly_fields = ('admin_link', 'order_sum', 'transfer_sum')
+    readonly_fields = ('admin_link', 'order_sum')
 
     def queryset(self, request):
-        qs = super(OrderInline, self).queryset(request)
-        return qs.annotate(order_sum=Sum('item__price'), transfer_sum=Sum('transfer__amount'))
+        return self.annotate_order(super(OrderInline, self).queryset(request))
 
 
 class OrderAdmin(admin.ModelAdmin, OrderMixin):
-    list_display = ('purchase', 'customer', 'order_sum', 'transfer_sum')
-    readonly_fields = ('order_sum', 'transfer_sum')
+    list_display = ('purchase', 'customer', 'order_sum')
+    readonly_fields = ('order_sum',)
     list_filter = ('purchase',)
     inlines = (ItemInline, TransferInline)
 
     def queryset(self, request):
-        qs = super(OrderAdmin, self).queryset(request)
-        return qs.annotate(order_sum=Sum('item__price'), transfer_sum=Sum('transfer__amount'))
+        return self.annotate_order(super(OrderAdmin, self).queryset(request))
+
 
 admin.site.register(Order, OrderAdmin)
 
@@ -164,8 +168,10 @@ class PurchaseAdmin(admin.ModelAdmin):
 
     def purchase_sum(self, obj):
         return obj.purchase_sum
+
     purchase_sum.short_description = _('sum')
     purchase_sum.admin_order_field = 'purchase_sum'
+
 
 admin.site.register(Purchase, PurchaseAdmin)
 
@@ -186,6 +192,7 @@ class ProductInline(admin.StackedInline):
     model = Product
     extra = 1
 
+
 admin.site.register(Product, ProductAdmin)
 
 
@@ -197,6 +204,7 @@ class CategoryAdmin(admin.ModelAdmin):
     )
     inlines = (ProductInline,)
 
+
 admin.site.register(Category, CategoryAdmin)
 
 
@@ -207,6 +215,7 @@ class ManufacturerAdmin(admin.ModelAdmin):
         (_('Extra'), {'fields': ('description',), 'classes': ('collapse',)})
     )
     inlines = (ProductInline,)
+
 
 admin.site.register(Manufacturer, ManufacturerAdmin)
 
