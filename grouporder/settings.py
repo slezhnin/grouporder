@@ -122,8 +122,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'html5boilerplate',
     'group_order',
 )
+
+GA_TRACKING_CODE = 'NONE'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

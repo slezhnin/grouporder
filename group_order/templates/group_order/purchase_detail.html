@@ -1,9 +1,12 @@
+{% extends "group_order/base.html" %}
 {% load i18n %}
 
+{% block main %}
 <h1>{{ purchase }}</h1>
 <ul>
     {% for o in purchase.order_set.all %}
         <li><a href=" {% url 'group_order:order' o.id %}">{{ o }}</a></li>
     {% endfor %}
 </ul>
-{% blocktrans count count=purchase.order_set.all.count %}{{ count }} order{% plural %}{{ count }} orders{% endblocktrans %}
+{% trans "order count" as olabel %} {{ olabel|capfirst }}: {{ purchase.order_set.all.count }}
+{% endblock %}

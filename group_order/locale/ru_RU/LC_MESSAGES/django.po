@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-17 18:06+0600\n"
-"PO-Revision-Date: 2013-07-17 18:41+0600\n"
+"POT-Creation-Date: 2013-07-17 23:12+0600\n"
+"PO-Revision-Date: 2013-07-17 23:12+0600\n"
 "Last-Translator: Sergey Lezhnin <s.lezhnin@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -118,46 +118,62 @@ msgstr "заказ"
 msgid "amount"
 msgstr "количество"
 
-#: templates/group_order/order_detail.html:9
-#, python-format
-msgid "%(count)s item"
-msgid_plural "%(count)s items"
-msgstr[0] "%(count)s товар"
-msgstr[1] "%(count)s товаров"
-msgstr[2] "%(count)s товара"
+#: templates/group_order/order_detail.html:7
+msgid "items"
+msgstr "товары"
 
-#: templates/group_order/order_detail.html:10
+#: templates/group_order/order_detail.html:13
+msgid "item count"
+msgstr "количество товаров"
+
+#: templates/group_order/order_detail.html:14
 msgid "total"
 msgstr "всего"
 
-#: templates/group_order/order_detail.html:20
-#, python-format
-msgid "%(count)s transfer"
-msgid_plural "%(count)s transfers"
-msgstr[0] "%(count)s передача"
-msgstr[1] "%(count)s передач"
-msgstr[2] "%(count)s передачи"
+#: templates/group_order/order_detail.html:18
+msgid "transfers"
+msgstr "оплаты"
 
-#: templates/group_order/order_detail.html:21
+#: templates/group_order/order_detail.html:24
+msgid "transfer count"
+msgstr "количество оплат"
+
+#: templates/group_order/order_detail.html:25
 msgid "paid"
 msgstr "уплачено"
 
-#: templates/group_order/purchase_detail.html:7
-#, python-format
-msgid "%(count)s order"
-msgid_plural "%(count)s orders"
-msgstr[0] "%(count)s заказ"
-msgstr[1] "%(count)s заказов"
-msgstr[2] "%(count)s заказа"
+#: templates/group_order/purchase_detail.html:9
+msgid "order count"
+msgstr "количество заказов"
 
-#: templates/group_order/purchase_list.html:7
-#, python-format
-msgid "%(count)s purchase"
-msgid_plural "%(count)s purchases"
-msgstr[0] "%(count)s закупка"
-msgstr[1] "%(count)s закупок"
-msgstr[2] "%(count)s закупки"
+#: templates/group_order/purchase_list.html:11
+msgid "purchase count"
+msgstr "количество закупок"
 
-#: templates/group_order/purchase_list.html:9
+#: templates/group_order/purchase_list.html:13
 msgid "No purchases are available."
 msgstr "Нет закупок."
+
+#~ msgid "%(count)s order"
+#~ msgid_plural "%(count)s orders"
+#~ msgstr[0] "%(count)s заказ"
+#~ msgstr[1] "%(count)s заказов"
+#~ msgstr[2] "%(count)s заказа"
+
+#~ msgid "%(count)s purchase"
+#~ msgid_plural "%(count)s purchases"
+#~ msgstr[0] "%(count)s закупка"
+#~ msgstr[1] "%(count)s закупок"
+#~ msgstr[2] "%(count)s закупки"
+
+#~ msgid "%(count)s item"
+#~ msgid_plural "%(count)s items"
+#~ msgstr[0] "%(count)s товар"
+#~ msgstr[1] "%(count)s товаров"
+#~ msgstr[2] "%(count)s товара"
+
+#~ msgid "%(count)s transfer"
+#~ msgid_plural "%(count)s transfers"
+#~ msgstr[0] "%(count)s передача"
+#~ msgstr[1] "%(count)s передач"
+#~ msgstr[2] "%(count)s передачи"

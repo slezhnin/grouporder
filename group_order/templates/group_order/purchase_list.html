@@ -1,12 +1,15 @@
+{% extends "group_order/base.html" %}
 {% load i18n %}
 
+{% block main %}
 {% if purchase_list %}
     <ul>
         {% for p in purchase_list %}
             <li><a href="{% url 'group_order:purchase' p.id %}">{{ p }}</a></li>
         {% endfor %}
     </ul>
-    {% blocktrans count count=purchase_list.count %}{{ count }} purchase{% plural %}{{ count }} purchases{% endblocktrans %}
+    {% trans "purchase count" as plabel %} {{ plabel|capfirst }}: {{ purchase_list.count }}
 {% else %}
     <p>{% trans "No purchases are available." %}</p>
 {% endif %}
+{% endblock %}
