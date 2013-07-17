@@ -97,6 +97,14 @@ class Order(models.Model):
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
+    @property
+    def total(self):
+        return self.item_set.aggregate(models.Sum('price'))['price__sum']
+
+    @property
+    def paid(self):
+        return self.transfer_set.aggregate(models.Sum('amount'))['amount__sum']
+
     def __unicode__(self):
         return ' '.join((unicode(self.purchase), unicode(self.customer),
                          timezone.localtime(self.created).strftime("%y-%m-%d")))

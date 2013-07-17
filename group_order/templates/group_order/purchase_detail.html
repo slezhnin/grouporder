@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<h1>{{ purchase }}</h1>
+<ul>
+    {% for o in purchase.order_set.all %}
+        <li><a href=" {% url 'group_order:order' o.id %}">{{ o }}</a></li>
+    {% endfor %}
+</ul>
+{% blocktrans count count=purchase.order_set.all.count %}{{ count }} order{% plural %}{{ count }} orders{% endblocktrans %}

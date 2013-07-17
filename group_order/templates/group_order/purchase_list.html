@@ -1,0 +1,12 @@
+{% load i18n %}
+
+{% if purchase_list %}
+    <ul>
+        {% for p in purchase_list %}
+            <li><a href="{% url 'group_order:purchase' p.id %}">{{ p }}</a></li>
+        {% endfor %}
+    </ul>
+    {% blocktrans count count=purchase_list.count %}{{ count }} purchase{% plural %}{{ count }} purchases{% endblocktrans %}
+{% else %}
+    <p>{% trans "No purchases are available." %}</p>
+{% endif %}
