@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-17 23:12+0600\n"
-"PO-Revision-Date: 2013-07-17 23:12+0600\n"
+"POT-Creation-Date: 2013-07-18 12:01+0600\n"
+"PO-Revision-Date: 2013-07-18 12:02+0600\n"
 "Last-Translator: Sergey Lezhnin <s.lezhnin@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -118,41 +118,62 @@ msgstr "заказ"
 msgid "amount"
 msgstr "количество"
 
-#: templates/group_order/order_detail.html:7
-msgid "items"
-msgstr "товары"
+#: templates/group_order/base.html:4 templates/group_order/base.html.py:7
+#: templates/group_order/login.html:5
+msgid "Group Order"
+msgstr "Групповой заказ"
 
-#: templates/group_order/order_detail.html:13
-msgid "item count"
-msgstr "количество товаров"
+#: templates/group_order/base.html:11
+msgid "Administration"
+msgstr "Администрирование"
 
-#: templates/group_order/order_detail.html:14
-msgid "total"
-msgstr "всего"
+#: templates/group_order/base.html:13
+msgid "Change password"
+msgstr "Сменить пароль"
 
-#: templates/group_order/order_detail.html:18
-msgid "transfers"
-msgstr "оплаты"
+#: templates/group_order/base.html:15
+msgid "Log out"
+msgstr "Выход"
 
-#: templates/group_order/order_detail.html:24
-msgid "transfer count"
-msgstr "количество оплат"
+#: templates/group_order/base.html:20
+msgid "Home"
+msgstr "Начало"
 
-#: templates/group_order/order_detail.html:25
-msgid "paid"
-msgstr "уплачено"
-
-#: templates/group_order/purchase_detail.html:9
-msgid "order count"
-msgstr "количество заказов"
-
-#: templates/group_order/purchase_list.html:11
+#: templates/group_order/index.html:11
 msgid "purchase count"
 msgstr "количество закупок"
 
-#: templates/group_order/purchase_list.html:13
+#: templates/group_order/index.html:13
 msgid "No purchases are available."
 msgstr "Нет закупок."
+
+#: templates/group_order/order_detail.html:5
+msgid "items"
+msgstr "товары"
+
+#: templates/group_order/order_detail.html:11
+msgid "item count"
+msgstr "количество товаров"
+
+#: templates/group_order/order_detail.html:12
+msgid "total"
+msgstr "всего"
+
+#: templates/group_order/order_detail.html:16
+msgid "transfers"
+msgstr "оплаты"
+
+#: templates/group_order/order_detail.html:22
+msgid "transfer count"
+msgstr "количество оплат"
+
+#: templates/group_order/order_detail.html:23
+msgid "paid"
+msgstr "уплачено"
+
+#: templates/group_order/purchase_detail.html:10
+msgid "order count"
+msgstr "количество заказов"
 
 #~ msgid "%(count)s order"
 #~ msgid_plural "%(count)s orders"

@@ -1,23 +1,6 @@
-{% extends "admin/base.html" %}
+{% extends "admin/login.html" %}
 {% load i18n %}
-
-{% block title %}{{ title }} | {% trans 'Group Order' %}{% endblock %}
 
 {% block branding %}
 <h1 id="site-name">{% trans 'Group Order' %}</h1>
-{% endblock %}
-
-{% block userlinks %}
-    <a href="{% url 'admin:index' %}">{% trans 'Django administration' %}</a>
-    {% if user.has_usable_password %}
-    <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
-    {% endif %}
-    <a href="{% url 'group_order:logout' %}">{% trans 'Log out' %}</a>
-{% endblock %}
-
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-<a href="{% url 'group_order:index' %}">{% trans 'Home' %}</a>
-{% if title %} &rsaquo; {{ title }}{% endif %}
-</div>
 {% endblock %}

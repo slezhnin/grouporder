@@ -1,26 +1,24 @@
 {% extends "group_order/base.html" %}
 {% load i18n %}
 
-{% block main %}
-<h1>{{ order }}</h1>
+{% block content %}
+    {% trans "items" as ihead %} {{ ihead|capfirst }}
+    <ul>
+        {% for i in order.item_set.all %}
+            <li><a href=" {% url 'group_order:item' i.id %}">{{ i }}</a></li>
+        {% endfor %}
+    </ul>
+    {% trans "item count" as ilabel %} {{ ilabel|capfirst }}: {{ order.item_set.all.count }}
+    {% if order.total %} - {{ order.total }} {% trans "total" %} {% endif %}
 
-{% trans "items" as ihead %} {{ ihead|capfirst }}
-<ul>
-    {% for i in order.item_set.all %}
-        <li><a href=" {% url 'group_order:item' i.id %}">{{ i }}</a></li>
-    {% endfor %}
-</ul>
-{% trans "item count" as ilabel %} {{ ilabel|capfirst }}: {{ order.item_set.all.count }}
-{% if order.total %} - {{ order.total }} {% trans "total" %} {% endif %}
+    <hr/>
 
-<hr/>
-
-{% trans "transfers" as thead %} {{ thead|capfirst }}
-<ul>
-    {% for t in order.transfer_set.all %}
-        <li><a href=" {% url 'group_order:transfer' t.id %}">{{ t }}</a></li>
-    {% endfor %}
-</ul>
-{% trans "transfer count" as tlabel %} {{ tlabel|capfirst }}: {{ order.transfer_set.all.count }}
-{% if order.paid %} - {{ order.paid }} {% trans "paid" %} {% endif %}
+    {% trans "transfers" as thead %} {{ thead|capfirst }}
+    <ul>
+        {% for t in order.transfer_set.all %}
+            <li><a href=" {% url 'group_order:transfer' t.id %}">{{ t }}</a></li>
+        {% endfor %}
+    </ul>
+    {% trans "transfer count" as tlabel %} {{ tlabel|capfirst }}: {{ order.transfer_set.all.count }}
+    {% if order.paid %} - {{ order.paid }} {% trans "paid" %} {% endif %}
 {% endblock %}
