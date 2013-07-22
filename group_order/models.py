@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import pre_save, post_init
 from django.dispatch import receiver
@@ -13,9 +14,9 @@ class Person(models.Model):
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
 
     def get_full_name(self):
-        return ' '.join(filter(lambda x: len(x), map(lambda x: x.strip().capitalize(),
-                                                     (self.first_name.strip() or self.user.first_name, self.middle_name,
-                                                      self.last_name.strip() or self.user.last_name)))) or self.user.name
+        return ' '.join(filter(lambda x: len(x), map(lambda x: x.strip().capitalize(), (
+            self.first_name.strip() or self.user.first_name, self.middle_name,
+            self.last_name.strip() or self.user.last_name)))) or self.user.name
 
     def __unicode__(self):
         return self.get_full_name()
@@ -52,14 +53,16 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, verbose_name=_('category'), blank=True, null=True, on_delete=models.SET_NULL)
-    manufacturer = models.ForeignKey(Manufacturer, verbose_name=_('manufacturer'), blank=True, null=True,
-                                     on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category, verbose_name=_('category'), blank=True, null=True,
+                                 on_delete=models.SET_NULL)
+    manufacturer = models.ForeignKey(Manufacturer, verbose_name=_('manufacturer'), blank=True,
+                                     null=True, on_delete=models.SET_NULL)
     name = models.CharField(_('name'), max_length=100)
     description = models.TextField(_('description'), blank=True)
 
     def __unicode__(self):
-        return ' '.join(map(lambda x: unicode(x), filter(None, (self.category, self.manufacturer, self.name))))
+        return ' '.join(
+            map(lambda x: unicode(x), filter(None, (self.category, self.manufacturer, self.name))))
 
 
 class Price(models.Model):
@@ -83,6 +86,9 @@ class Purchase(models.Model):
     closed = models.DateTimeField(_('close date'), blank=True, null=True)
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
+
+    def get_absolute_url(self):
+        return reverse('group_order:purchase', kwargs={'pk': self.pk})
 
     def __unicode__(self):
         return ' '.join((unicode(self.supplier), unicode(self.manager), unicode(self.due)))
