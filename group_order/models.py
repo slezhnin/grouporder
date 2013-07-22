@@ -90,6 +90,9 @@ class Purchase(models.Model):
     def get_absolute_url(self):
         return reverse('group_order:purchase', kwargs={'pk': self.pk})
 
+    def past_due(self):
+        return self.due < timezone.now().date()
+
     def __unicode__(self):
         return ' '.join((unicode(self.supplier), unicode(self.manager), unicode(self.due)))
 
