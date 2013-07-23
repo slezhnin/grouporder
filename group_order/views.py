@@ -120,7 +120,14 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
         return reverse('group_order:order', kwargs={'pk': order.id})
 
 
-class OrderView(DetailView, ModelContextMixin):
+class OrderForm(ModelForm):
+    class Meta:
+        model = Order
+
+
+class OrderView(UpdateView, ModelContextMixin):
+    template_name_suffix = ''
+    form_class = PurchaseUpdateForm
     model = Order
 
 
