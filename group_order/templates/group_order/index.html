@@ -2,13 +2,14 @@
 {% load i18n %}
 
 {% block content %}
+    <a href="{% url 'group_order:purchase_add' %}">{% trans 'New purchase' %}</a>
 {% if purchase_list %}
     <ul>
         {% for p in purchase_list %}
             <li><a href="{% url 'group_order:purchase' p.id %}">{{ p }}</a></li>
         {% endfor %}
     </ul>
-    {% trans "purchase count" as plabel %} {{ plabel|capfirst }}: {{ purchase_list.count }}
+    {% trans 'Purchase count' %}: {{ purchase_list.count }}
 {% else %}
     <p>{% trans "No purchases are available." %}</p>
 {% endif %}

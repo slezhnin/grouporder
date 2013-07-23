@@ -88,8 +88,15 @@ class Purchase(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def get_absolute_url(self):
-        return reverse('group_order:purchase', kwargs={'pk': self.pk})
+        return reverse('group_order:purchase', kwargs={'pk': self.id})
 
+    def is_manager(self, person):
+        return self.manager == person
+
+    def has_order(self, person):
+        return self.order_set.filter(customer=person).aggregate(models.Count('id'))['id__count']
+
+    @property
     def past_due(self):
         return self.due < timezone.now().date()
 
@@ -105,6 +112,9 @@ class Order(models.Model):
     customer = models.ForeignKey(Person, verbose_name=_('customer'))
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
+
+    def get_absolute_url(self):
+        return reverse('group_order:order', kwargs={'pk': self.id})
 
     @property
     def total(self):

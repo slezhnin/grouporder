@@ -2,23 +2,23 @@
 {% load i18n %}
 
 {% block content %}
-    {% trans "items" as ihead %} {{ ihead|capfirst }}
+    {% trans "Items" %}
     <ul>
         {% for i in order.item_set.all %}
             <li><a href=" {% url 'group_order:item' i.id %}">{{ i }}</a></li>
         {% endfor %}
     </ul>
-    {% trans "item count" as ilabel %} {{ ilabel|capfirst }}: {{ order.item_set.all.count }}
+    {% trans "Item count" %}: {{ order.item_set.all.count }}
     {% if order.total %} - {{ order.total }} {% trans "total" %} {% endif %}
 
     <hr/>
 
-    {% trans "transfers" as thead %} {{ thead|capfirst }}
+    {% trans "Transfers" %}
     <ul>
         {% for t in order.transfer_set.all %}
             <li><a href=" {% url 'group_order:transfer' t.id %}">{{ t }}</a></li>
         {% endfor %}
     </ul>
-    {% trans "transfer count" as tlabel %} {{ tlabel|capfirst }}: {{ order.transfer_set.all.count }}
+    {% trans "Transfer count" %}: {{ order.transfer_set.all.count }}
     {% if order.paid %} - {{ order.paid }} {% trans "paid" %} {% endif %}
 {% endblock %}

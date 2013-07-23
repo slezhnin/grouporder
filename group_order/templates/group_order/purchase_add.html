@@ -2,10 +2,12 @@
 {% load i18n %}
 
 {% block content %}
-<ul>
-    {% for o in purchase.order_set.all %}
-        <li><a href=" {% url 'group_order:order' o.id %}">{{ o }}</a></li>
-    {% endfor %}
-</ul>
-{% trans "order count" as olabel %} {{ olabel|capfirst }}: {{ purchase.order_set.all.count }}
+    <div class="module">
+        <form action="{% url 'group_order:purchase_add' %}" method="post">
+            {% csrf_token %}
+            {{ form.manager.as_hidden }}
+            {{ form.as_p }}
+                <input type="submit" value="{% trans 'Create purchase' %}"/>
+        </form>
+    </div>
 {% endblock %}

@@ -3,35 +3,38 @@
 
 {% block content %}
     {% block content_title %}{% endblock %}
-    {% if user.person == purchase.manager or user.is_staff %}
-        <div class="module">
-            <form action="{% url 'group_order:purchase' purchase.id %}" method="post">
-                {% csrf_token %}
-                {{ form.manager.as_hidden }}
-                {{ form.supplier.as_hidden }}
-                {{ form.as_p }}
+    <div class="module">
+        <form action="{% url 'group_order:purchase' purchase.id %}" method="post">
+            {% csrf_token %}
+            {{ form.manager.as_hidden }}
+            {{ form.supplier.as_hidden }}
+            {{ form.as_p }}
+            {% if is_manager or user.is_staff %}
                 {% if purchase.closed %}
                     <input type="submit" name="open_purchase" value="{% trans 'Open' %}"/>
                 {% else %}
                     <input type="submit" value="{% trans 'Update' %}"/>
-                    {% if purchase.past_due %}
-                        <ul class="errorlist">
-                            <li>{% trans "Can't close. Due date is in the past." %}</li>
-                        </ul>
-                    {% else %}
+                    {% if not purchase.past_due %}
                         <input type="submit" name="close_purchase" value="{% trans 'Close' %}"/>
                     {% endif %}
                 {% endif %}
-            </form>
-        </div>
-    {% endif %}
+            {% endif %}
+            {% if purchase.past_due %}
+                <ul class="errorlist">
+                    <li>{% trans "Due date is in the past." %}</li>
+                </ul>
+            {% elif not purchase.closed and not has_order %}
+                <input type="submit" name="add_order" value="{% trans 'Add order' %}"/>
+            {% endif %}
+        </form>
+    </div>
     <div class="module">
-        {% trans 'order list' as ol %}{{ ol|capfirst }}
+        {% trans 'Order list' %}
         <ul>
             {% for o in purchase.order_set.all %}
                 <li><a href=" {% url 'group_order:order' o.id %}">{{ o }}</a></li>
             {% endfor %}
         </ul>
-        {% trans "order count" as olabel %} {{ olabel|capfirst }}: {{ purchase.order_set.all.count }}
+        {% trans 'Order count' %}: {{ purchase.order_set.all.count }}
     </div>
 {% endblock %}
