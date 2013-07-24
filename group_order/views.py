@@ -18,8 +18,7 @@ def index(request):
     if not request.user.is_authenticated():
         return views.login(request, template_name='group_order/login.html',
                            extra_context={REDIRECT_FIELD_NAME: reverse('group_order:index')})
-    return render(request, 'group_order/index.html',
-                  {'purchase_list': Purchase.objects.all().order_by('-due')})
+    return render(request, 'group_order/index.html', {'purchase_list': Purchase.objects.all().order_by('-due')})
 
 
 def password_change(request):
@@ -28,8 +27,7 @@ def password_change(request):
 
 
 def password_change_done(request):
-    return views.password_change_done(request,
-                                      template_name='group_order/password_change_done.html')
+    return views.password_change_done(request, template_name='group_order/password_change_done.html')
 
 
 def logout(request):
@@ -134,7 +132,7 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
 class ItemForm(ModelForm):
     class Meta:
         model = Item
-        fields = ('product', 'amount', 'price')
+        fields = ('product', 'quantity', 'price')
 
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
@@ -146,22 +144,35 @@ class OrderForm(ModelForm):
         model = Order
 
 
+class TransferForm(ModelForm):
+    class Meta:
+        model = Transfer
+        fields = ('customer', 'amount')
+
+
 class OrderView(UpdateView, ModelContextMixin):
     template_name_suffix = ''
     form_class = OrderForm
     model = Order
     ItemFormSet = inlineformset_factory(Order, Item, form=ItemForm, extra=1)
+    TransferFormSet = inlineformset_factory(Order, Transfer, form=TransferForm, extra=1)
 
     def update_context(self, context, obj):
         context['item_formset'] = self.ItemFormSet(instance=obj)
-        context['can_save'] = not obj.purchase.closed and (
+        context['can_save_item'] = not obj.purchase.closed and (
             obj.customer == self.request.user.person or self.request.user.is_staff)
+        context['transfer_formset'] = self.TransferFormSet(instance=obj)
+        context['can_save_transfer'] = obj.purchase.manager == self.request.user.person or self.request.user.is_staff
 
-    def post(self, request, *args, **kwargs):
-        item_formset = self.ItemFormSet(self.request.POST, instance=self.get_object())
-        if item_formset.is_valid():
-            item_formset.save()
-        return super(OrderView, self).post(request, *args, **kwargs)
+
+def post(self, request, *args, **kwargs):
+    item_formset = self.ItemFormSet(self.request.POST, instance=self.get_object())
+    if item_formset.is_valid():
+        item_formset.save()
+    transfer_formset = self.TransferFormSet(self.request.POST, instance=self.get_object())
+    if transfer_formset.is_valid():
+        transfer_formset.save()
+    return super(OrderView, self).post(request, *args, **kwargs)
 
 
 class ItemView(DetailView, ModelContextMixin):

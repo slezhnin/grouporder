@@ -35,27 +35,30 @@
                 <td></td>
                 <td>{% trans 'Customer' %}</td>
                 <td>{% trans 'Created' %}</td>
+                <td>{% trans 'Quantity' %}</td>
                 <td>{% trans 'Amount' %}</td>
-                <td>{% trans 'Sum' %}</td>
                 <td>{% trans 'Paid' %}</td>
+                <td>{% trans 'Remainder' %}</td>
             </tr>
             {% for o in purchase.order_set.all %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td><a href=" {% url 'group_order:order' o.id %}">{{ o.customer }}</a></td>
                     <td>{{ o.created.date }}</td>
-                    <td>{{ o.amount }}</td>
+                    <td>{{ o.quantity }}</td>
                     <td>{{ o.total }}</td>
                     <td>{{ o.paid }}</td>
+                    <td>{{ o.remainder }}</td>
                 </tr>
             {% endfor %}
             <tr>
                 <td></td>
                 <td>{% trans 'Total' %}</td>
                 <td></td>
-                <td>{{ purchase.amount }}</td>
+                <td>{{ purchase.quantity }}</td>
                 <td>{{ purchase.total }}</td>
                 <td>{{ purchase.paid }}</td>
+                <td>{{ purchase.remainder }}</td>
             </tr>
         </table>
     </div>

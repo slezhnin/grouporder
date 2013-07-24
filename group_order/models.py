@@ -100,14 +100,17 @@ class Purchase(models.Model):
     def past_due(self):
         return self.due < timezone.now().date()
 
-    def amount(self):
-        return self.order_set.aggregate(models.Sum('item__amount'))['item__amount__sum']
+    def quantity(self):
+        return self.order_set.aggregate(models.Sum('item__quantity'))['item__quantity__sum'] or 0
 
     def total(self):
-        return self.order_set.aggregate(models.Sum('item__price'))['item__price__sum']
+        return self.order_set.aggregate(models.Sum('item__price'))['item__price__sum'] or 0
 
     def paid(self):
         return self.order_set.aggregate(models.Sum('transfer__amount'))['transfer__amount__sum']
+
+    def remainder(self):
+        return self.paid() - self.total()
 
     def __unicode__(self):
         return ' '.join((unicode(self.supplier), unicode(self.manager), unicode(self.due)))
@@ -125,14 +128,17 @@ class Order(models.Model):
     def get_absolute_url(self):
         return reverse('group_order:order', kwargs={'pk': self.id})
 
-    def amount(self):
-        return self.item_set.aggregate(models.Sum('amount'))['amount__sum']
+    def quantity(self):
+        return self.item_set.aggregate(models.Sum('quantity'))['quantity__sum'] or 0
 
     def total(self):
-        return self.item_set.aggregate(models.Sum('price'))['price__sum']
+        return self.item_set.aggregate(models.Sum('price'))['price__sum'] or 0
 
     def paid(self):
-        return self.transfer_set.aggregate(models.Sum('amount'))['amount__sum']
+        return self.transfer_set.aggregate(models.Sum('amount'))['amount__sum'] or 0
+
+    def remainder(self):
+        return self.paid() - self.total()
 
     def __unicode__(self):
         return ' '.join((unicode(self.purchase), unicode(self.customer),
@@ -158,18 +164,18 @@ class Transfer(models.Model):
 class Item(models.Model):
     order = models.ForeignKey(Order, verbose_name=_('order'))
     product = models.ForeignKey(Price, verbose_name=_('product'))
-    amount = models.IntegerField(_('amount'))
+    quantity = models.IntegerField(_('quantity'))
     price = models.FloatField(_('sum'))
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.price = self.amount * self.product.price
+        self.price = self.quantity * self.product.price
         super(Item, self).save(force_insert, force_update, using, update_fields)
 
     def __unicode__(self):
         return ' '.join((
-            unicode(self.order), unicode(self.product), unicode(self.amount), unicode(self.price),
+            unicode(self.order), unicode(self.product), unicode(self.quantity), unicode(self.price),
             timezone.localtime(self.created).strftime("%H:%M:%S")))
 
     class Meta:

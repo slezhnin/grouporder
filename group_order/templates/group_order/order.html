@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+    {% block content_title %}{% endblock %}
     {% trans "Items" %}
     <div class="module">
         <form method="post" action="{% url 'group_order:order' order.id %}">
@@ -10,6 +11,7 @@
             <table>
                 {% if item_formset %}
                     <tr>
+                        <td></td>
                         {% for field in item_formset.0 %}
                             {% if not field.is_hidden %}
                                 <td>{{ field.label_tag }}</td>
@@ -19,6 +21,7 @@
                 {% endif %}
                 {% for form in item_formset %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         {% for field in form %}
                             {% if field.is_hidden %}
                                 {{ field }}
@@ -29,11 +32,12 @@
                     </tr>
                 {% endfor %}
                 <tr>
+                    <td></td>
                     <td>
                         {% trans "Total" %}
                     </td>
                     <td>
-                        {{ order.amount }}
+                        {{ order.quantity }}
                     </td>
                     <td>
                         {{ order.total }}
@@ -41,8 +45,9 @@
                     <td></td>
                 </tr>
                 <tr>
+                    <td></td>
                     <td>
-                        {% if can_save %}
+                        {% if can_save_item %}
                             <input type="submit" value="{% trans 'Save' %}"/>
                         {% endif %}
                         {% if order.purchase.closed %}
@@ -57,11 +62,52 @@
     </div>
 
     {% trans "Transfers" %}
-    <ul>
-        {% for t in order.transfer_set.all %}
-            <li><a href=" {% url 'group_order:transfer' t.id %}">{{ t }}</a></li>
-        {% endfor %}
-    </ul>
-    {% trans "Transfer count" %}: {{ order.transfer_set.all.count }}
-    {% if order.paid %} - {{ order.paid }} {% trans "paid" %} {% endif %}
+    <div class="module">
+        <form method="post" action="{% url 'group_order:order' order.id %}">
+            {% csrf_token %}
+            {{ transfer_formset.management_form }}
+            <table>
+                {% if transfer_formset %}
+                    <tr>
+                        <td></td>
+                        {% for field in transfer_formset.0 %}
+                            {% if not field.is_hidden %}
+                                <td>{{ field.label_tag }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+                {% for form in transfer_formset %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        {% for field in form %}
+                            {% if field.is_hidden %}
+                                {{ field }}
+                            {% else %}
+                                <td>{{ field }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td>
+                        {% trans "Total" %}
+                    </td>
+                    <td>
+                        {{ order.paid }}
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        {% if can_save_transfer %}
+                            <input type="submit" value="{% trans 'Save' %}"/>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
 {% endblock %}

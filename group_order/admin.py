@@ -45,7 +45,7 @@ admin.site.register(Transfer)
 # Item sum
 class ItemSumChangeList(ChangeList):
     #provide the list of fields that we need to calculate averages and totals
-    fields_to_total = ('amount', 'price')
+    fields_to_total = ('quantity', 'price')
 
     def get_total_values(self, queryset):
         """
@@ -90,7 +90,7 @@ class ItemSumChangeList(ChangeList):
 # Item Admin UI
 class ItemInline(admin.TabularInline):
     readonly_fields = ('price',)
-    fields = ('product', 'amount', 'price')
+    fields = ('product', 'quantity', 'price')
     model = Item
     extra = 1
 
@@ -100,7 +100,7 @@ class ItemInline(admin.TabularInline):
 
 class ItemAdmin(admin.ModelAdmin):
     list_filter = ('order',)
-    list_display = ('order', 'product', 'amount', 'price')
+    list_display = ('order', 'product', 'quantity', 'price')
     readonly_fields = ('price',)
     model = Item
     # extra = 1
