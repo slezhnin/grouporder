@@ -8,9 +8,9 @@
 {% endblock %}
 
 {% block userlinks %}
-    <a href="{% url 'admin:index' %}">{% trans 'Administration' %}</a>
+    <a target="_blank" href="{% url 'admin:index' %}">{% trans 'Administration' %}</a>
     {% if user.has_usable_password %}
-        <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+        <a href="{% url 'group_order:password_change' %}">{% trans 'Change password' %}</a> /
     {% endif %}
     <a href="{% url 'group_order:logout' %}">{% trans 'Log out' %}</a>
 {% endblock %}

@@ -3,15 +3,58 @@
 
 {% block content %}
     {% trans "Items" %}
-    <ul>
-        {% for i in order.item_set.all %}
-            <li><a href=" {% url 'group_order:item' i.id %}">{{ i }}</a></li>
-        {% endfor %}
-    </ul>
-    {% trans "Item count" %}: {{ order.item_set.all.count }}
-    {% if order.total %} - {{ order.total }} {% trans "total" %} {% endif %}
-
-    <hr/>
+    <div class="module">
+        <form method="post" action="{% url 'group_order:order' order.id %}">
+            {% csrf_token %}
+            {{ item_formset.management_form }}
+            <table>
+                {% if item_formset %}
+                    <tr>
+                        {% for field in item_formset.0 %}
+                            {% if not field.is_hidden %}
+                                <td>{{ field.label_tag }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+                {% for form in item_formset %}
+                    <tr>
+                        {% for field in form %}
+                            {% if field.is_hidden %}
+                                {{ field }}
+                            {% else %}
+                                <td>{{ field }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td>
+                        {% trans "Total" %}
+                    </td>
+                    <td>
+                        {{ order.amount }}
+                    </td>
+                    <td>
+                        {{ order.total }}
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        {% if can_save %}
+                            <input type="submit" value="{% trans 'Save' %}"/>
+                        {% endif %}
+                        {% if order.purchase.closed %}
+                            <ul class="errorlist">
+                                <li>{% trans "Purchase is closed." %}</li>
+                            </ul>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
 
     {% trans "Transfers" %}
     <ul>

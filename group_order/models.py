@@ -73,7 +73,7 @@ class Price(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((unicode(self.supplier), unicode(self.product), unicode(self.price)))
+        return ' '.join((unicode(self.product), unicode(self.price)))
 
     class Meta:
         ordering = ["created"]
@@ -100,6 +100,15 @@ class Purchase(models.Model):
     def past_due(self):
         return self.due < timezone.now().date()
 
+    def amount(self):
+        return self.order_set.aggregate(models.Sum('item__amount'))['item__amount__sum']
+
+    def total(self):
+        return self.order_set.aggregate(models.Sum('item__price'))['item__price__sum']
+
+    def paid(self):
+        return self.order_set.aggregate(models.Sum('transfer__amount'))['transfer__amount__sum']
+
     def __unicode__(self):
         return ' '.join((unicode(self.supplier), unicode(self.manager), unicode(self.due)))
 
@@ -116,11 +125,12 @@ class Order(models.Model):
     def get_absolute_url(self):
         return reverse('group_order:order', kwargs={'pk': self.id})
 
-    @property
+    def amount(self):
+        return self.item_set.aggregate(models.Sum('amount'))['amount__sum']
+
     def total(self):
         return self.item_set.aggregate(models.Sum('price'))['price__sum']
 
-    @property
     def paid(self):
         return self.transfer_set.aggregate(models.Sum('amount'))['amount__sum']
 
@@ -149,7 +159,7 @@ class Item(models.Model):
     order = models.ForeignKey(Order, verbose_name=_('order'))
     product = models.ForeignKey(Price, verbose_name=_('product'))
     amount = models.IntegerField(_('amount'))
-    price = models.FloatField(_('sum'), editable=False)
+    price = models.FloatField(_('sum'))
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 

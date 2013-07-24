@@ -1,5 +1,6 @@
 # Create your views here.
 from django.forms import ModelForm
+from django.forms.models import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth import views
@@ -19,6 +20,16 @@ def index(request):
                            extra_context={REDIRECT_FIELD_NAME: reverse('group_order:index')})
     return render(request, 'group_order/index.html',
                   {'purchase_list': Purchase.objects.all().order_by('-due')})
+
+
+def password_change(request):
+    return views.password_change(request, template_name='group_order/password_change_form.html',
+                                 post_change_redirect=reverse('group_order:password_change_done'))
+
+
+def password_change_done(request):
+    return views.password_change_done(request,
+                                      template_name='group_order/password_change_done.html')
 
 
 def logout(request):
@@ -120,6 +131,16 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
         return reverse('group_order:order', kwargs={'pk': order.id})
 
 
+class ItemForm(ModelForm):
+    class Meta:
+        model = Item
+        fields = ('product', 'amount', 'price')
+
+    def __init__(self, *args, **kwargs):
+        super(ItemForm, self).__init__(*args, **kwargs)
+        self.fields['price'].widget.attrs['readonly'] = True
+
+
 class OrderForm(ModelForm):
     class Meta:
         model = Order
@@ -127,8 +148,20 @@ class OrderForm(ModelForm):
 
 class OrderView(UpdateView, ModelContextMixin):
     template_name_suffix = ''
-    form_class = PurchaseUpdateForm
+    form_class = OrderForm
     model = Order
+    ItemFormSet = inlineformset_factory(Order, Item, form=ItemForm, extra=1)
+
+    def update_context(self, context, obj):
+        context['item_formset'] = self.ItemFormSet(instance=obj)
+        context['can_save'] = not obj.purchase.closed and (
+            obj.customer == self.request.user.person or self.request.user.is_staff)
+
+    def post(self, request, *args, **kwargs):
+        item_formset = self.ItemFormSet(self.request.POST, instance=self.get_object())
+        if item_formset.is_valid():
+            item_formset.save()
+        return super(OrderView, self).post(request, *args, **kwargs)
 
 
 class ItemView(DetailView, ModelContextMixin):
