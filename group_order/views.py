@@ -173,11 +173,3 @@ def post(self, request, *args, **kwargs):
     if transfer_formset.is_valid():
         transfer_formset.save()
     return super(OrderView, self).post(request, *args, **kwargs)
-
-
-class ItemView(DetailView, ModelContextMixin):
-    model = Item
-
-
-class TransferView(DetailView, ModelContextMixin):
-    model = Transfer

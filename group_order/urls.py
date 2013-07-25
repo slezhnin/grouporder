@@ -10,7 +10,4 @@ urlpatterns = patterns('', url(r'^$', views.index, name='index'),
                            name='password_change_done'),
                        url(r'^add/$', views.PurchaseCreate.as_view(), name='purchase_add'),
                        url(r'^(?P<pk>\d+)/$', views.PurchaseUpdate.as_view(), name='purchase'),
-                       url(r'^order/(?P<pk>\d+)/$', views.OrderView.as_view(), name='order'),
-                       url(r'^item/(?P<pk>\d+)/$', views.ItemView.as_view(), name='item'),
-                       url(r'^transfer/(?P<pk>\d+)/$', views.TransferView.as_view(),
-                           name='transfer'), )
+                       url(r'^order/(?P<pk>\d+)/$', views.OrderView.as_view(), name='order'), )
