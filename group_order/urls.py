@@ -4,6 +4,7 @@ from django.conf.urls import patterns, url
 from group_order import views
 
 urlpatterns = patterns('', url(r'^$', views.index, name='index'),
+                       url(r'^(?P<filter>[all|my]+)/$', views.index_filter, name='index_filter'),
                        url(r'^logout/$', views.logout, name='logout'),
                        url(r'^password_change/$', views.password_change, name='password_change'),
                        url(r'^password_change/done/$', views.password_change_done,

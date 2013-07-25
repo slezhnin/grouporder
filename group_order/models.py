@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 from django.db import models
 from django.db.models.signals import pre_save, post_init
 from django.dispatch import receiver
@@ -61,8 +61,8 @@ class Product(models.Model):
     description = models.TextField(_('description'), blank=True)
 
     def __unicode__(self):
-        return ' '.join(
-            map(lambda x: unicode(x), filter(None, (self.category, self.manufacturer, self.name))))
+        return ' '.join(map(lambda x: unicode(x),
+                            filter(None, (self.category, self.manufacturer, self.name))))
 
 
 class Price(models.Model):
@@ -88,7 +88,7 @@ class Purchase(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def get_absolute_url(self):
-        return reverse('group_order:purchase', kwargs={'pk': self.id})
+        return reverse_lazy('group_order:purchase', kwargs={'pk': self.id})
 
     def is_manager(self, person):
         return self.manager == person
@@ -107,7 +107,8 @@ class Purchase(models.Model):
         return self.order_set.aggregate(models.Sum('item__price'))['item__price__sum'] or 0
 
     def paid(self):
-        return self.order_set.aggregate(models.Sum('transfer__amount'))['transfer__amount__sum']
+        return self.order_set.aggregate(models.Sum('transfer__amount'))[
+            'transfer__amount__sum'] or 0
 
     def remainder(self):
         return self.paid() - self.total()
@@ -126,7 +127,7 @@ class Order(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def get_absolute_url(self):
-        return reverse('group_order:order', kwargs={'pk': self.id})
+        return reverse_lazy('group_order:order', kwargs={'pk': self.id})
 
     def quantity(self):
         return self.item_set.aggregate(models.Sum('quantity'))['quantity__sum'] or 0
@@ -175,8 +176,8 @@ class Item(models.Model):
 
     def __unicode__(self):
         return ' '.join((
-            unicode(self.order), unicode(self.product), unicode(self.quantity), unicode(self.price),
-            timezone.localtime(self.created).strftime("%H:%M:%S")))
+            unicode(self.order), unicode(self.product), unicode(self.quantity),
+            unicode(self.price), timezone.localtime(self.created).strftime("%H:%M:%S")))
 
     class Meta:
         ordering = ["created"]

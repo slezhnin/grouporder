@@ -8,17 +8,30 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, UpdateView
+from django.utils.translation import ugettext_lazy as _
+
 from models import Purchase, Order, Item, Transfer
 
 
 def index(request):
+    return index_filter(request, 'all')
+
+
+def index_filter(request, filter):
     if not request.user.is_authenticated():
         return views.login(request, template_name='group_order/login.html',
-                           extra_context={REDIRECT_FIELD_NAME: reverse('group_order:index')})
-    return render(request, 'group_order/index.html', {'purchase_list': Purchase.objects.all().order_by('-due')})
+                           extra_context={'title': _('Group Order'),
+                                          REDIRECT_FIELD_NAME: reverse('group_order:index')})
+    my_order_list = Order.objects.all().filter(customer=request.user.person).order_by('-created')
+    purchase_list = Purchase.objects.all()
+    if filter == 'my':
+        purchase_list = purchase_list.filter(manager=request.user.person)
+    purchase_list = purchase_list.order_by('-due')
+    return render(request, 'group_order/index.html',
+                  {'purchase_list': purchase_list, 'my_order_list': my_order_list,
+                   'filter': filter})
 
 
 def password_change(request):
@@ -27,7 +40,8 @@ def password_change(request):
 
 
 def password_change_done(request):
-    return views.password_change_done(request, template_name='group_order/password_change_done.html')
+    return views.password_change_done(request,
+                                      template_name='group_order/password_change_done.html')
 
 
 def logout(request):
@@ -156,20 +170,32 @@ class OrderView(UpdateView, ModelContextMixin):
     model = Order
     ItemFormSet = inlineformset_factory(Order, Item, form=ItemForm, extra=1)
     TransferFormSet = inlineformset_factory(Order, Transfer, form=TransferForm, extra=1)
+    form_action = {'item_set': 'item_action', 'transfer_set': 'transfer_action'}
 
     def update_context(self, context, obj):
         context['item_formset'] = self.ItemFormSet(instance=obj)
         context['can_save_item'] = not obj.purchase.closed and (
             obj.customer == self.request.user.person or self.request.user.is_staff)
         context['transfer_formset'] = self.TransferFormSet(instance=obj)
-        context['can_save_transfer'] = obj.purchase.manager == self.request.user.person or self.request.user.is_staff
+        context[
+            'can_save_transfer'] = obj.purchase.manager == self.request.user.person or self.request.user.is_staff
 
+    def post(self, request, *args, **kwargs):
+        for token in self.form_action:
+            if any(map(lambda f: token in f, self.request.POST)):
+                handler = getattr(self, self.form_action[token])
+                if handler:
+                    return redirect(handler(self.get_object(), request))
+        return super(OrderView, self).post(request, *args, **kwargs)
 
-def post(self, request, *args, **kwargs):
-    item_formset = self.ItemFormSet(self.request.POST, instance=self.get_object())
-    if item_formset.is_valid():
-        item_formset.save()
-    transfer_formset = self.TransferFormSet(self.request.POST, instance=self.get_object())
-    if transfer_formset.is_valid():
-        transfer_formset.save()
-    return super(OrderView, self).post(request, *args, **kwargs)
+    def item_action(self, object, request):
+        item_formset = self.ItemFormSet(request.POST, instance=self.get_object())
+        if item_formset.is_valid():
+            item_formset.save()
+        return reverse('group_order:order', kwargs={'pk': object.id})
+
+    def transfer_action(self, object, request):
+        transfer_formset = self.TransferFormSet(request.POST, instance=self.get_object())
+        if transfer_formset.is_valid():
+            transfer_formset.save()
+        return reverse('group_order:order', kwargs={'pk': object.id})
