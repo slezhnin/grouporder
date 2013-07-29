@@ -143,6 +143,12 @@ INSTALLED_APPS = (
 # Django-mobile settings
 FLAVOURS = ('full', 'mobile')
 DEFAULT_MOBILE_FLAVOUR = 'mobile'
+FLAVOURS_TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    # 'django.template.loaders.eggs.Loader',
+)
+#FLAVOURS_TEMPLATE_PREFIX = 'group_order/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
