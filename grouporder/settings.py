@@ -87,6 +87,7 @@ SECRET_KEY = '&51#fbkz55jot@#jo$p+_0t9vc_8n%7ka6bd9e%3prca)2&hiu'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
+    'django_mobile.loader.Loader',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
     # 'django.template.loaders.eggs.Loader',
@@ -98,8 +99,21 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django_mobile.middleware.MobileDetectionMiddleware',
+    'django_mobile.middleware.SetFlavourMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "django_mobile.context_processors.flavour",
 )
 
 ROOT_URLCONF = 'grouporder.urls'
@@ -122,8 +136,13 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_mobile',
     'group_order',
 )
+
+# Django-mobile settings
+FLAVOURS = ('full', 'mobile')
+DEFAULT_MOBILE_FLAVOUR = 'mobile'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
