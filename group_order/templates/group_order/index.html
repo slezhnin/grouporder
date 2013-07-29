@@ -2,7 +2,13 @@
 {% load i18n %}
 
 {% block content %}
-    {% trans 'Purchase list' %}
+    {% trans 'supplier' as supplier %}
+    {% trans 'manager' as manager %}
+    {% trans 'due' as due %}
+    {% trans 'amount' as amount %}
+    {% trans 'paid' as paid %}
+    {% trans 'remainder' as remainder %}
+    {% trans 'Purchases' %}
     {% if purchase_list %}
         {% if filter == 'all' %}
             <a href="{% url 'group_order:index_filter' 'my' %}">{% trans 'my' %}</a>
@@ -13,12 +19,12 @@
         <div class="module">
             <table>
                 <tr>
-                    <td>{% trans 'Supplier' %}</td>
-                    <td>{% trans 'Manager' %}</td>
-                    <td>{% trans 'Due date' %}</td>
-                    <td>{% trans 'Amount' %}</td>
-                    <td>{% trans 'Paid' %}</td>
-                    <td>{% trans 'Remainder' %}</td>
+                    <td>{{ supplier|capfirst }}</td>
+                    <td>{{ manager|capfirst }}</td>
+                    <td>{{ due|capfirst }}</td>
+                    <td>{{ amount|capfirst }}</td>
+                    <td>{{ paid|capfirst }}</td>
+                    <td>{{ remainder|capfirst }}</td>
                 </tr>
                 {% for p in purchase_list %}
                     {% url 'group_order:purchase' p.id as purchase_url %}
@@ -41,12 +47,12 @@
         <div class="module">
             <table>
                 <tr>
-                    <td>{% trans 'Supplier' %}</td>
-                    <td>{% trans 'Manager' %}</td>
-                    <td>{% trans 'Due date' %}</td>
-                    <td>{% trans 'Amount' %}</td>
-                    <td>{% trans 'Paid' %}</td>
-                    <td>{% trans 'Remainder' %}</td>
+                    <td>{{ supplier|capfirst }}</td>
+                    <td>{{ manager|capfirst }}</td>
+                    <td>{{ due|capfirst }}</td>
+                    <td>{{ amount|capfirst }}</td>
+                    <td>{{ paid|capfirst }}</td>
+                    <td>{{ remainder|capfirst }}</td>
                 </tr>
                 {% for o in my_order_list %}
                     {% url 'group_order:order' o.id as order_url %}

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-18 12:01+0600\n"
-"PO-Revision-Date: 2013-07-18 12:02+0600\n"
+"POT-Creation-Date: 2013-07-29 09:49+0600\n"
+"PO-Revision-Date: 2013-07-29 09:51+0600\n"
 "Last-Translator: Sergey Lezhnin <s.lezhnin@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Extra"
 msgstr "Дополнительно"
 
-#: admin.py:120 admin.py:172 models.py:119 models.py:133
+#: admin.py:120 admin.py:172 models.py:157 models.py:171
 msgid "sum"
 msgstr "сумма"
 
@@ -34,92 +34,100 @@ msgstr "править"
 msgid "link"
 msgstr "переход"
 
-#: models.py:10
+#: models.py:11
 msgid "user"
 msgstr "пользователь"
 
-#: models.py:11
+#: models.py:12
 msgid "first name"
 msgstr "имя"
 
-#: models.py:12
+#: models.py:13
 msgid "middle name"
 msgstr "отчество"
 
-#: models.py:13
+#: models.py:14
 msgid "last name"
 msgstr "фамилия"
 
-#: models.py:25 models.py:35 models.py:44 models.py:58
+#: models.py:26 models.py:36 models.py:45 models.py:60
 msgid "name"
 msgstr "имя"
 
-#: models.py:26
+#: models.py:27
 msgid "phone"
 msgstr "телефон"
 
-#: models.py:27
+#: models.py:28
 msgid "address"
 msgstr "адрес"
 
-#: models.py:28 models.py:36 models.py:45 models.py:59
+#: models.py:29 models.py:37 models.py:46 models.py:61
 msgid "description"
 msgstr "описание"
 
-#: models.py:51
+#: models.py:52
 msgid "categories"
 msgstr "категории"
 
-#: models.py:55
+#: models.py:56
 msgid "category"
 msgstr "категория"
 
-#: models.py:56
+#: models.py:58
 msgid "manufacturer"
 msgstr "производитель"
 
-#: models.py:66 models.py:81
+#: models.py:69 models.py:84 templates/group_order/index.html:5
 msgid "supplier"
 msgstr "поставщик"
 
-#: models.py:67 models.py:131
+#: models.py:70 models.py:169
 msgid "product"
 msgstr "продукт"
 
-#: models.py:68
+#: models.py:71
 msgid "price"
 msgstr "цена"
 
-#: models.py:80
+#: models.py:83 models.py:118 templates/group_order/index.html:6
 msgid "manager"
 msgstr "ответственный"
 
-#: models.py:82
-msgid "due date"
-msgstr "дата завершения"
+#: models.py:85 models.py:119 templates/group_order/index.html:7
+msgid "due"
+msgstr "срок"
 
-#: models.py:83
+#: models.py:86
 msgid "close date"
 msgstr "дата закрытия"
 
-#: models.py:95
+#: models.py:118
+msgid "Purchase from supplier"
+msgstr "Закупка от поставщика"
+
+#: models.py:126
 msgid "purchase"
 msgstr "закупка"
 
-#: models.py:96 models.py:117
+#: models.py:127 models.py:155 templates/group_order/purchase.html:36
 msgid "customer"
 msgstr "заказчик"
 
-#: models.py:118 models.py:130
+#: models.py:147 models.py:156 models.py:168
 msgid "order"
 msgstr "заказ"
 
-#: models.py:132
-msgid "amount"
+#: models.py:147
+msgid "date"
+msgstr "дата"
+
+#: models.py:170 templates/group_order/purchase.html:38
+msgid "quantity"
 msgstr "количество"
 
-#: templates/group_order/base.html:4 templates/group_order/base.html.py:7
-#: templates/group_order/login.html:5
+#: views.py:25 templates/group_order/base.html:4
+#: templates/group_order/base.html.py:7 templates/group_order/login.html:5
 msgid "Group Order"
 msgstr "Групповой заказ"
 
@@ -127,53 +135,186 @@ msgstr "Групповой заказ"
 msgid "Administration"
 msgstr "Администрирование"
 
-#: templates/group_order/base.html:13
+#: templates/group_order/base.html:13 templates/group_order/base.html.py:24
+#: templates/group_order/password_change_done.html:3
+#: templates/group_order/password_change_form.html:7
 msgid "Change password"
 msgstr "Сменить пароль"
 
-#: templates/group_order/base.html:15
+#: templates/group_order/base.html:15 templates/group_order/base.html.py:26
+#: templates/group_order/password_change_done.html:3
+#: templates/group_order/password_change_form.html:8
 msgid "Log out"
 msgstr "Выход"
 
 #: templates/group_order/base.html:20
+msgid "Welcome,"
+msgstr "Привет,"
+
+#: templates/group_order/base.html:33 templates/group_order/order.html:6
+#: templates/group_order/password_change_done.html:6
+#: templates/group_order/password_change_form.html:11
 msgid "Home"
 msgstr "Начало"
 
-#: templates/group_order/index.html:11
-msgid "purchase count"
-msgstr "количество закупок"
+#: templates/group_order/index.html:8 templates/group_order/purchase.html:39
+msgid "amount"
+msgstr "количество"
 
-#: templates/group_order/index.html:13
-msgid "No purchases are available."
-msgstr "Нет закупок."
-
-#: templates/group_order/order_detail.html:5
-msgid "items"
-msgstr "товары"
-
-#: templates/group_order/order_detail.html:11
-msgid "item count"
-msgstr "количество товаров"
-
-#: templates/group_order/order_detail.html:12
-msgid "total"
-msgstr "всего"
-
-#: templates/group_order/order_detail.html:16
-msgid "transfers"
-msgstr "оплаты"
-
-#: templates/group_order/order_detail.html:22
-msgid "transfer count"
-msgstr "количество оплат"
-
-#: templates/group_order/order_detail.html:23
+#: templates/group_order/index.html:9 templates/group_order/purchase.html:40
 msgid "paid"
 msgstr "уплачено"
 
-#: templates/group_order/purchase_detail.html:10
-msgid "order count"
-msgstr "количество заказов"
+#: templates/group_order/index.html:10 templates/group_order/purchase.html:41
+msgid "remainder"
+msgstr "остаток"
+
+#: templates/group_order/index.html:11
+msgid "Purchases"
+msgstr "Закупки"
+
+#: templates/group_order/index.html:14
+msgid "my"
+msgstr "мои"
+
+#: templates/group_order/index.html:16
+msgid "all"
+msgstr "все"
+
+#: templates/group_order/index.html:18 templates/group_order/index.html:43
+msgid "add"
+msgstr "добавить"
+
+#: templates/group_order/index.html:46
+msgid "My orders"
+msgstr "Мои заказы"
+
+#: templates/group_order/order.html:15
+msgid "Items"
+msgstr "Товары"
+
+#: templates/group_order/order.html:46 templates/group_order/order.html:104
+#: templates/group_order/purchase.html:56
+msgid "total"
+msgstr "всего"
+
+#: templates/group_order/order.html:60 templates/group_order/order.html:115
+msgid "Save"
+msgstr "Сохранить"
+
+#: templates/group_order/order.html:64
+msgid "Purchase is closed."
+msgstr "Закупка закрыта."
+
+#: templates/group_order/order.html:73
+msgid "Transfers"
+msgstr "Оплаты"
+
+#: templates/group_order/password_change_done.html:3
+#: templates/group_order/password_change_form.html:6
+msgid "Documentation"
+msgstr "Документация"
+
+#: templates/group_order/password_change_done.html:7
+#: templates/group_order/password_change_form.html:12
+#: templates/group_order/password_change_form.html:16
+#: templates/group_order/password_change_form.html:31
+msgid "Password change"
+msgstr "Смена пароля"
+
+#: templates/group_order/password_change_done.html:11
+#: templates/group_order/password_change_done.html:15
+msgid "Password change successful"
+msgstr "Успешная смена пароля"
+
+#: templates/group_order/password_change_done.html:17
+msgid "Your password was changed."
+msgstr "Ваш пароль был изменён"
+
+#: templates/group_order/password_change_form.html:25
+msgid ""
+"Please correct the\n"
+"                            error below."
+msgid_plural ""
+"Please correct the errors\n"
+"                            below."
+msgstr[0] ""
+"Пожалуйста, исправьте\n"
+"                            ошибку ниже."
+msgstr[1] ""
+"Пожалуйста, исправьте\n"
+"                            ошибки ниже."
+msgstr[2] ""
+"Пожалуйста, исправьте\n"
+"                            ошибки ниже."
+
+#: templates/group_order/password_change_form.html:33
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Пожалуйста, введите ваш старый пароль для безопасности, а затем введите ваш "
+"новый пароль дважды, чтобы мы смогли проверить, что он набран правильно."
+
+#: templates/group_order/password_change_form.html:40
+msgid "Old password"
+msgstr "Старый пароль"
+
+#: templates/group_order/password_change_form.html:46
+msgid "New password"
+msgstr "Новый пароль"
+
+#: templates/group_order/password_change_form.html:52
+msgid "Password (again)"
+msgstr "Пароль (снова)"
+
+#: templates/group_order/password_change_form.html:58
+msgid "Change my password"
+msgstr "Сменить мой пароль"
+
+#: templates/group_order/purchase.html:14
+msgid "Open"
+msgstr "Открыть"
+
+#: templates/group_order/purchase.html:16
+msgid "Update"
+msgstr "Обновить"
+
+#: templates/group_order/purchase.html:18
+msgid "Close"
+msgstr "Закрыть"
+
+#: templates/group_order/purchase.html:24
+msgid "Due date is in the past."
+msgstr "Срок прошёл."
+
+#: templates/group_order/purchase.html:27
+msgid "Add order"
+msgstr "Добавить заказ"
+
+#: templates/group_order/purchase.html:31
+msgid "Orders"
+msgstr "Заказы"
+
+#: templates/group_order/purchase.html:37
+msgid "created"
+msgstr "дата создания"
+
+#: templates/group_order/purchase_add.html:10
+msgid "Create purchase"
+msgstr "Создать закупку"
+
+#~ msgid "No purchases are available."
+#~ msgstr "Нет закупок."
+
+#~ msgid "item count"
+#~ msgstr "количество товаров"
+
+#~ msgid "transfer count"
+#~ msgstr "количество оплат"
+
+#~ msgid "order count"
+#~ msgstr "количество заказов"
 
 #~ msgid "%(count)s order"
 #~ msgid_plural "%(count)s orders"

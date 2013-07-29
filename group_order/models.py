@@ -73,7 +73,8 @@ class Price(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join((unicode(self.product), unicode(self.price)))
+        return ' '.join(
+            (unicode(self.product), '| ' + unicode(_('price')) + ':', unicode(self.price)))
 
     class Meta:
         ordering = ["created"]
@@ -82,7 +83,7 @@ class Price(models.Model):
 class Purchase(models.Model):
     manager = models.ForeignKey(Person, verbose_name=_('manager'))
     supplier = models.ForeignKey(Supplier, verbose_name=_('supplier'))
-    due = models.DateField(_('due date'))
+    due = models.DateField(_('due'))
     closed = models.DateTimeField(_('close date'), blank=True, null=True)
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
@@ -107,14 +108,16 @@ class Purchase(models.Model):
         return self.order_set.aggregate(models.Sum('item__price'))['item__price__sum'] or 0
 
     def paid(self):
-        return self.order_set.aggregate(models.Sum('transfer__amount'))[
-            'transfer__amount__sum'] or 0
+        amount = models.Sum('transfer__amount')
+        return self.order_set.aggregate(amount)['transfer__amount__sum'] or 0
 
     def remainder(self):
         return self.paid() - self.total()
 
     def __unicode__(self):
-        return ' '.join((unicode(self.supplier), unicode(self.manager), unicode(self.due)))
+        return ' '.join((
+            _('Purchase from supplier') + ':', unicode(self.supplier) + ',', _('manager') + ':',
+            unicode(self.manager) + ',', _('due') + ':', unicode(self.due)))
 
     class Meta:
         ordering = ["created"]
@@ -142,7 +145,7 @@ class Order(models.Model):
         return self.paid() - self.total()
 
     def __unicode__(self):
-        return ' '.join((unicode(self.purchase), unicode(self.customer),
+        return ' '.join((_('order').capitalize(), unicode(self.customer) + ',', _('date') + ':',
                          timezone.localtime(self.created).strftime("%y-%m-%d")))
 
     class Meta:

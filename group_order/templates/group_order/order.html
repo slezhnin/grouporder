@@ -1,6 +1,15 @@
 {% extends "group_order/base.html" %}
 {% load i18n %}
 
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'group_order:index' %}">{% trans 'Home' %}</a>
+        &rsaquo; <a
+            href="{% url 'group_order:purchase' order.purchase.id %}">{{ order.purchase }}</a>
+        {% if title %} &rsaquo; {{ title }}{% endif %}
+    </div>
+{% endblock %}
+
 {% block content %}
     {% block content_title %}{% endblock %}
     {% trans "Items" %}
@@ -34,7 +43,7 @@
                 <tr>
                     <td></td>
                     <td>
-                        {% trans "Total" %}
+                        {% trans 'total' as total %}{{ total|capfirst }}
                     </td>
                     <td>
                         {{ order.quantity }}
@@ -92,7 +101,7 @@
                 <tr>
                     <td></td>
                     <td>
-                        {% trans "Total" %}
+                        {% trans 'total' as total %}{{ total|capfirst }}
                     </td>
                     <td>
                         {{ order.paid }}

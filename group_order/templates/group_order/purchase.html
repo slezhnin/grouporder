@@ -28,17 +28,17 @@
             {% endif %}
         </form>
     </div>
-    {% trans 'Order list' %}
+    {% trans 'Orders' %}
     <div class="module">
         <table>
             <tr>
                 <td></td>
-                <td>{% trans 'Customer' %}</td>
-                <td>{% trans 'Created' %}</td>
-                <td>{% trans 'Quantity' %}</td>
-                <td>{% trans 'Amount' %}</td>
-                <td>{% trans 'Paid' %}</td>
-                <td>{% trans 'Remainder' %}</td>
+                <td>{% trans 'customer' as customer %}{{ customer|capfirst }}</td>
+                <td>{% trans 'created' as created %}{{ created|capfirst }}</td>
+                <td>{% trans 'quantity' as quantity %}{{ quantity|capfirst }}</td>
+                <td>{% trans 'amount' as amount %}{{ amount|capfirst }}</td>
+                <td>{% trans 'paid' as paid %}{{ paid|capfirst }}</td>
+                <td>{% trans 'remainder' as remainder %}{{ remainder|capfirst }}</td>
             </tr>
             {% for o in purchase.order_set.all %}
                 <tr>
@@ -53,7 +53,7 @@
             {% endfor %}
             <tr>
                 <td></td>
-                <td>{% trans 'Total' %}</td>
+                <td>{% trans 'total' as total %}{{ total|capfirst }}</td>
                 <td></td>
                 <td>{{ purchase.quantity }}</td>
                 <td>{{ purchase.total }}</td>
