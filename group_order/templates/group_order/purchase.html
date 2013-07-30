@@ -10,7 +10,7 @@
             {{ form.supplier.as_hidden }}
             {{ form.as_p }}
             {% if is_manager or user.is_staff %}
-                {% if purchase.closed %}
+                {% if purchase.closed and user.is_staff %}
                     <input type="submit" name="open_purchase" value="{% trans 'Open' %}"/>
                 {% else %}
                     <input type="submit" value="{% trans 'Update' %}"/>
@@ -20,11 +20,17 @@
                 {% endif %}
             {% endif %}
             {% if purchase.past_due %}
-                <ul class="errorlist">
-                    <li>{% trans "Due date is in the past." %}</li>
-                </ul>
+                {% if not purchase.closed %}
+                    <ul class="errorlist">
+                        <li>{% trans "Due date is in the past." %}</li>
+                    </ul>
+                {% endif %}
             {% elif not purchase.closed and not has_order %}
                 <input type="submit" name="add_order" value="{% trans 'Add order' %}"/>
+            {% endif %}
+            {% if can_transfer %}
+                <input type="submit" name="transfer_remainder"
+                       value="{% trans 'Transfer remainder' %}"/>
             {% endif %}
         </form>
     </div>

@@ -1,5 +1,5 @@
 # Create your views here.
-from django.forms import ModelForm
+from django.forms import ModelForm, ChoiceField
 from django.forms.models import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView, UpdateView
+from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
 from models import Purchase, Order, Item, Transfer
@@ -62,12 +63,15 @@ class ModelContextMixin(SingleObjectMixin):
 class PurchaseCreateForm(ModelForm):
     class Meta:
         model = Purchase
-        exclude = ('closed',)
+        exclude = ('closed', 'transferred',)
 
 
 class PurchaseUpdateForm(ModelForm):
     class Meta:
         model = Purchase
+        exclude = ('transferred',)
+
+    transfer = ChoiceField(required=False, label=_('Transfer remainder to') + ':')
 
 
 class PurchaseCreate(CreateView):
@@ -97,7 +101,7 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
     template_name_suffix = ''
     form_class = PurchaseUpdateForm
     model = Purchase
-    additional_action = ('close_purchase', 'open_purchase', 'add_order')
+    additional_action = ('close_purchase', 'open_purchase', 'add_order', 'transfer_remainder')
 
     @method_decorator(login_required(login_url=reverse_lazy('group_order:index')))
     def dispatch(self, request, *args, **kwargs):
@@ -106,6 +110,11 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
     def update_context(self, context, obj):
         context['is_manager'] = obj.is_manager(self.request.user.person)
         context['has_order'] = obj.has_order(self.request.user.person)
+        context['can_transfer'] = self.can_transfer(obj)
+
+    def can_transfer(self, obj):
+        c_and_t = obj.closed and not obj.transferred
+        return c_and_t and obj.transfer_count() and obj.valid_to_transfer().count()
 
     def get_form(self, form_class):
         form = super(PurchaseUpdate, self).get_form(form_class)
@@ -116,6 +125,13 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
         form.fields['closed'].widget.attrs['readonly'] = True
         if (not self.object.is_manager(user.person) and not user.is_staff) or self.object.closed:
             form.fields['due'].widget.attrs['readonly'] = True
+        if self.can_transfer(self.object):
+            choices = []
+            for p in self.object.valid_to_transfer().order_by('-due'):
+                choices.append((p.id, unicode(p)))
+            form.fields['transfer'].choices = choices
+        else:
+            del form.fields['transfer']
         return form
 
     def post(self, request, *args, **kwargs):
@@ -141,6 +157,12 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
         order = Order(purchase=object, customer=request.user.person)
         order.save()
         return reverse('group_order:order', kwargs={'pk': order.id})
+
+    def transfer_remainder(self, object, request):
+        object.transfer_remainder(request.POST['transfer'])
+        messages.add_message(request, messages.SUCCESS,
+                             _('Purchase remainder was transferred successfully.'))
+        return reverse('group_order:purchase', kwargs={'pk': object.id})
 
 
 class ItemForm(ModelForm):

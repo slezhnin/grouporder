@@ -85,6 +85,7 @@ class Purchase(models.Model):
     supplier = models.ForeignKey(Supplier, verbose_name=_('supplier'))
     due = models.DateField(_('due'))
     closed = models.DateTimeField(_('close date'), blank=True, null=True)
+    transferred = models.BooleanField(_('transferred'), default=False)
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
@@ -97,7 +98,6 @@ class Purchase(models.Model):
     def has_order(self, person):
         return self.order_set.filter(customer=person).aggregate(models.Count('id'))['id__count']
 
-    @property
     def past_due(self):
         return self.due < timezone.now().date()
 
@@ -111,8 +111,36 @@ class Purchase(models.Model):
         amount = models.Sum('transfer__amount')
         return self.order_set.aggregate(amount)['transfer__amount__sum'] or 0
 
+    def transfer_count(self):
+        aggr_trans_cnt = models.Count('transfer__amount')
+        return self.order_set.aggregate(aggr_trans_cnt)['transfer__amount__count'] or 0
+
     def remainder(self):
         return self.paid() - self.total()
+
+    def valid_to_transfer(self):
+        return Purchase.objects.exclude(id=self.id).filter(closed=None)
+
+    def transfer_remainder(self, purchase_id):
+        # Check if id is valid
+        transfer_to_purchase = Purchase.objects.get(id=purchase_id)
+        # Make transfer for each order
+        for order in self.order_set.all():
+            remainder = order.remainder()
+            if remainder != 0:
+                new_transfer = Transfer(
+                    order=self._find_or_create_order(transfer_to_purchase, order),
+                    customer=order.customer, amount=remainder)
+                new_transfer.save()
+        self.transferred = True
+        self.save()
+
+    def _find_or_create_order(self, transfer_to_purchase, order):
+        if transfer_to_purchase.order_set.filter(customer=order.customer).count():
+            return transfer_to_purchase.order_set.get(customer=order.customer)
+        new_order = Order(purchase=transfer_to_purchase, customer=order.customer)
+        new_order.save()
+        return new_order
 
     def __unicode__(self):
         return ' '.join((
