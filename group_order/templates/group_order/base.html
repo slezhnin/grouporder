@@ -1,36 +1,127 @@
-{% extends "admin/base.html" %}
+<!DOCTYPE html>
 {% load i18n %}
+{% load bootstrap_toolkit %}
+<html lang="{{ LANGUAGE_CODE|default:'en-us' }}">
+<head>
+    <title>{% block title %}{% if title %}{{ title }} | {% endif %}
+        {% trans 'Group Order' %}{% endblock %}</title>
+    {% bootstrap_stylesheet_tag %}
+    {% bootstrap_stylesheet_tag "responsive" %}
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+        }
+    </style>
+    {% block extrastyle %}{% endblock %}
+    <!--[if lt IE 9]>
+    {#<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>#}
+    <script src="{{ STATIC_URL }}js/html5.js"></script>
+    <![endif]-->
+    {% block extra_head %}{% endblock %}
+    {% block extrahead %}{% endblock %}
+    {% block blockbots %}
+        <meta name="robots" content="NONE,NOARCHIVE"/>
+    {% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-{% block title %}{% if title %}{{ title }} | {% endif %}{% trans 'Group Order' %}{% endblock %}
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
 
-{% block branding %}
-    <h1 id="site-name">{% trans 'Group Order' %}</h1>
-{% endblock %}
+<!-- Container -->
+<div id="container" class="container">
 
-{% block userlinks %}
-    <a target="_blank" href="{% url 'admin:index' %}">{% trans 'Administration' %}</a>
-    {% if user.has_usable_password %}
-        <a href="{% url 'group_order:password_change' %}">{% trans 'Change password' %}</a> /
-    {% endif %}
-    <a href="{% url 'group_order:logout' %}">{% trans 'Log out' %}</a>
-{% endblock %}
-{% block nav-global %}
-    {% if user.is_active and not user.is_staff %}
-        <div id="user-tools">
-            {% trans 'Welcome,' %}
-            <strong>{% filter force_escape %}
-                {% firstof user.get_short_name user.get_username %}{% endfilter %}</strong>.
-            {% if user.has_usable_password %}
-                <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
-            {% endif %}
-            <a href="{% url 'group_order:logout' %}">{% trans 'Log out' %}</a>
+    {% if not is_popup %}
+        <!-- Header -->
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse"
+                            data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="#">
+                        {% block branding %}
+                            {% trans 'Group Order' %}
+                        {% endblock %}
+                    </a>
+                    {% if user.is_active %}
+                        <div class="nav-collapse collapse">
+                            <p class="navbar-text pull-right">
+                                {% trans 'Welcome,' %}
+                                <a href="#" class="navbar-link">
+                                    <strong>
+                                        {% filter force_escape %}
+                                            {% firstof user.get_short_name user.get_username %}
+                                        {% endfilter %}
+                                    </strong>
+                                </a>.
+                            </p>
+                            <ul class="nav">
+                                {#<li class="active"><a href="#">Home</a></li>#}
+                                {% if user.is_staff %}
+                                    <li><a target="_blank"
+                                           href="{% url 'admin:index' %}">{% trans 'Administration' %}</a>
+                                    </li>
+                                {% endif %}
+                                {% if user.has_usable_password %}
+                                    <li>
+                                        <a href="{% url 'group_order:password_change' %}">{% trans 'Change password' %}</a>
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <a href="{% url 'group_order:logout' %}">{% trans 'Log out' %}</a>
+                                </li>
+                                {% block userlinks %}
+                                {% endblock %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <!--/.nav-collapse -->
+                </div>
+            </div>
         </div>
+        <!-- END Header -->
+        {% block breadcrumbs %}
+            <div class="breadcrumbs">
+                <a href="{% url 'group_order:index' %}">{% trans 'Home' %}</a>
+                {% if title %} &rsaquo; {{ title }}{% endif %}
+            </div>
+        {% endblock %}
     {% endif %}
-{% endblock %}
 
-{% block breadcrumbs %}
-    <div class="breadcrumbs">
-        <a href="{% url 'group_order:index' %}">{% trans 'Home' %}</a>
-        {% if title %} &rsaquo; {{ title }}{% endif %}
+    {% block messages %}
+        {% bootstrap_messages %}
+        {#        {% if messages %}#}
+        {#            <ul class="messagelist">{% for message in messages %}#}
+        {#                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>#}
+        {#            {% endfor %}</ul>#}
+        {#        {% endif %}#}
+    {% endblock messages %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+            {% block object-tools %}{% endblock %}
+            {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear"/>
     </div>
-{% endblock %}
+    <!-- END Content -->
+
+    {% block footer %}
+        <div id="footer" class="row"></div>
+    {% endblock %}
+</div>
+<!-- END Container -->
+
+{#<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>#}
+<script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+{% bootstrap_javascript_tag %}
+
+</body>
+</html>

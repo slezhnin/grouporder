@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'bootstrap_toolkit',
     'django_mobile',
     'group_order',
 )
@@ -149,6 +150,9 @@ FLAVOURS_TEMPLATE_LOADERS = (
     # 'django.template.loaders.eggs.Loader',
 )
 #FLAVOURS_TEMPLATE_PREFIX = 'group_order/'
+
+# Django-bootdtrap-toolkit
+# BOOTSTRAP_BASE_URL = STATIC_URL
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
