@@ -72,8 +72,6 @@ class PurchaseUpdateForm(ModelForm):
         model = Purchase
         exclude = ('transferred',)
 
-    due = DateField(widget=BootstrapDateInput, label=_('due').capitalize())
-
     transfer = ChoiceField(required=False, label=_('Transfer remainder to') + ':')
 
 
@@ -126,6 +124,7 @@ class PurchaseUpdate(UpdateView, ModelContextMixin):
             form.fields['manager'].widget.attrs['disabled'] = True
         form.fields['supplier'].widget.attrs['disabled'] = True
         form.fields['closed'].widget.attrs['readonly'] = True
+        form.fields['due'].widget = BootstrapDateInput()
         if (not self.object.is_manager(user.person) and not user.is_staff) or self.object.closed:
             form.fields['due'].widget.attrs['readonly'] = True
         if self.can_transfer(self.object):

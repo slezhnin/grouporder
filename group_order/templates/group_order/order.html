@@ -41,8 +41,7 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-                <tfoot>
-                <tr>
+                <tr class="info">
                     <td></td>
                     <td>
                         {% trans 'total' as total %}{{ total|capfirst }}
@@ -55,7 +54,6 @@
                     </td>
                     <td></td>
                 </tr>
-                </tfoot>
             </table>
             {% if order.purchase.closed or order.purchase.past_due %}
                 <div class="alert alert-error">
@@ -112,8 +110,7 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-                <tfoot>
-                <tr>
+                <tr class="info">
                     <td></td>
                     <td>
                         {% trans 'total' as total %}{{ total|capfirst }}
@@ -123,7 +120,6 @@
                     </td>
                     <td></td>
                 </tr>
-                </tfoot>
             </table>
             <div class="form-actions">
                 {% if can_save_transfer %}

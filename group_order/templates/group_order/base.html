@@ -17,6 +17,11 @@
     {#<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>#}
     <script src="{{ STATIC_URL }}js/html5.js"></script>
     <![endif]-->
+
+    {#<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>#}
+    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    {% bootstrap_javascript_tag %}
+
     {% block extra_head %}{% endblock %}
     {% block extrahead %}{% endblock %}
     {% block blockbots %}
@@ -44,7 +49,7 @@
                     {% endblock %}
                 </a>
                 {% if user.is_active %}
-                    <ul class="nav nav-pills pull-right">
+                    <ul class="nav nav-pills pull-right nav-collapse">
                         {#<li class="active"><a href="#">Home</a></li>#}
                         {% if user.is_staff %}
                             <li><a target="_blank"
@@ -118,10 +123,6 @@
     {% endblock %}
 </div>
 <!-- END Container -->
-
-{#<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>#}
-<script src="{{ STATIC_URL }}js/jquery.min.js"></script>
-{% bootstrap_javascript_tag %}
 
 </body>
 </html>

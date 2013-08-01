@@ -14,6 +14,14 @@
             {{ form.manager.as_hidden }}
             {{ form.supplier.as_hidden }}
             {{ form|as_bootstrap:'horizontal' }}
+            {% if purchase.past_due and not purchase.closed %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <ul class="inline">
+                        <li>{% trans "Due date is in the past." %}</li>
+                    </ul>
+                </div>
+            {% endif %}
             <div class="form-actions">
                 {% if is_manager or user.is_staff %}
                     {% if purchase.closed and user.is_staff %}
@@ -37,14 +45,6 @@
                            value="{% trans 'Transfer remainder' %}" class="btn btn-secondary"/>
                 {% endif %}
             </div>
-            {% if purchase.past_due and not purchase.closed %}
-                <div class="alert alert-error">
-                    <button type="button" class="close" data-dismiss="alert">×</button>
-                    <ul class="inline">
-                        <li>{% trans "Due date is in the past." %}</li>
-                    </ul>
-                </div>
-            {% endif %}
         </form>
     </div>
     <div class="module">
@@ -74,8 +74,7 @@
                 </tr>
             {% endfor %}
             </tbody>
-            <tfoot>
-            <tr>
+            <tr class="info">
                 <td></td>
                 <td>{% trans 'total' as total %}{{ total|capfirst }}</td>
                 <td></td>
@@ -84,7 +83,6 @@
                 <td>{{ purchase.paid }}</td>
                 <td>{{ purchase.remainder }}</td>
             </tr>
-            </tfoot>
         </table>
     </div>
 {% endblock %}

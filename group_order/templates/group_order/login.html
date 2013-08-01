@@ -1,6 +1,16 @@
-{% extends "admin/login.html" %}
+{% extends "group_order/base.html" %}
 {% load i18n %}
+{% load bootstrap_toolkit %}
 
-{% block branding %}
-<h1 id="site-name">{% trans 'Group Order' %}</h1>
+{% block content %}
+    {% block content_title %}{% endblock %}
+    <form action="{{ app_path }}" method="post" id="login-form" class="form-horizontal">
+        {% csrf_token %}
+        {{ form|as_bootstrap:'horizontal' }}
+        <input type="hidden" name="this_is_the_login_form" value="1" />
+        <input type="hidden" name="next" value="{{ next }}" />
+        <div class="form-actions">
+            <input type="submit" value="{% trans 'Log in' %}" class="btn btn-primary"/>
+        </div>
+    </form>
 {% endblock %}
