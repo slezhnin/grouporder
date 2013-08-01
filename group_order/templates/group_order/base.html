@@ -27,69 +27,69 @@
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
 
-<!-- Container -->
-<div id="container" class="container">
-
-    {% if not is_popup %}
-        <!-- Header -->
-        <div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container-fluid">
-                    <button type="button" class="btn btn-navbar" data-toggle="collapse"
-                            data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="brand" href="#">
-                        {% block branding %}
-                            {% trans 'Group Order' %}
+{% if not is_popup %}
+    <!-- Header -->
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand">
+                    {% block branding %}
+                        {% trans 'Group Order' %}
+                    {% endblock %}
+                </a>
+                {% if user.is_active %}
+                    <ul class="nav nav-pills pull-right">
+                        {#<li class="active"><a href="#">Home</a></li>#}
+                        {% if user.is_staff %}
+                            <li><a target="_blank"
+                                   href="{% url 'admin:index' %}">{% trans 'Administration' %}</a>
+                            </li>
+                        {% endif %}
+                        {% if user.has_usable_password %}
+                            <li>
+                                <a href="{% url 'group_order:password_change' %}">{% trans 'Change password' %}</a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'group_order:logout' %}">{% trans 'Log out' %}</a>
+                        </li>
+                        {% block userlinks %}
                         {% endblock %}
-                    </a>
-                    {% if user.is_active %}
-                        <div class="nav-collapse collapse">
-                            <p class="navbar-text pull-right">
+                        <li class="divider-vertical pull-right"/>
+                        <li class="pull-right">
+                            <a>
                                 {% trans 'Welcome,' %}
-                                <a href="#" class="navbar-link">
-                                    <strong>
-                                        {% filter force_escape %}
-                                            {% firstof user.get_short_name user.get_username %}
-                                        {% endfilter %}
-                                    </strong>
-                                </a>.
-                            </p>
-                            <ul class="nav">
-                                {#<li class="active"><a href="#">Home</a></li>#}
-                                {% if user.is_staff %}
-                                    <li><a target="_blank"
-                                           href="{% url 'admin:index' %}">{% trans 'Administration' %}</a>
-                                    </li>
-                                {% endif %}
-                                {% if user.has_usable_password %}
-                                    <li>
-                                        <a href="{% url 'group_order:password_change' %}">{% trans 'Change password' %}</a>
-                                    </li>
-                                {% endif %}
-                                <li>
-                                    <a href="{% url 'group_order:logout' %}">{% trans 'Log out' %}</a>
-                                </li>
-                                {% block userlinks %}
-                                {% endblock %}
-                            </ul>
-                        </div>
-                    {% endif %}
-                    <!--/.nav-collapse -->
-                </div>
+                                <strong>
+                                    {% filter force_escape %}
+                                        {% firstof user.get_short_name user.get_username %}
+                                    {% endfilter %}
+                                </strong>
+                                .
+                            </a>
+                        </li>
+                        </a>
+                    </ul>
+                {% endif %}
+                <!--/.nav-collapse -->
             </div>
         </div>
-        <!-- END Header -->
-        {% block breadcrumbs %}
-            <div class="breadcrumbs">
-                <a href="{% url 'group_order:index' %}">{% trans 'Home' %}</a>
-                {% if title %} &rsaquo; {{ title }}{% endif %}
-            </div>
-        {% endblock %}
-    {% endif %}
+    </div>
+    <!-- END Header -->
+    <div class="breadcrumb navbar-static-top">
+        <a href="{% url 'group_order:index' %}">{% trans 'Home' %}</a>
+        {% block breadcrumb %}{% endblock %}
+        {% if title %} &rsaquo; {{ title }}{% endif %}
+    </div>
+{% endif %}
+
+<!-- Container -->
+<div id="container" class="container-narrow">
 
     {% block messages %}
         {% bootstrap_messages %}

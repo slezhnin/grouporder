@@ -87,7 +87,6 @@ SECRET_KEY = '&51#fbkz55jot@#jo$p+_0t9vc_8n%7ka6bd9e%3prca)2&hiu'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django_mobile.loader.Loader',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
     # 'django.template.loaders.eggs.Loader',
@@ -99,8 +98,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django_mobile.middleware.MobileDetectionMiddleware',
-    'django_mobile.middleware.SetFlavourMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -113,7 +110,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "django_mobile.context_processors.flavour",
 )
 
 ROOT_URLCONF = 'grouporder.urls'
@@ -137,7 +133,6 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'bootstrap_toolkit',
-    'django_mobile',
     'group_order',
 )
 
@@ -152,7 +147,7 @@ FLAVOURS_TEMPLATE_LOADERS = (
 #FLAVOURS_TEMPLATE_PREFIX = 'group_order/'
 
 # Django-bootdtrap-toolkit
-# BOOTSTRAP_BASE_URL = STATIC_URL
+BOOTSTRAP_BASE_URL = STATIC_URL
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

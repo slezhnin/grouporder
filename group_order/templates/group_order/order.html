@@ -1,33 +1,33 @@
 {% extends "group_order/base.html" %}
 {% load i18n %}
+{% load bootstrap_toolkit %}
 
-{% block breadcrumbs %}
-    <div class="breadcrumbs">
-        <a href="{% url 'group_order:index' %}">{% trans 'Home' %}</a>
-        &rsaquo; <a
-            href="{% url 'group_order:purchase' order.purchase.id %}">{{ order.purchase }}</a>
-        {% if title %} &rsaquo; {{ title }}{% endif %}
-    </div>
+{% block breadcrumb %}
+    &rsaquo;
+    <a href="{% url 'group_order:purchase' order.purchase.id %}">{{ order.purchase }}</a>
 {% endblock %}
 
 {% block content %}
     {% block content_title %}{% endblock %}
-    {% trans "Items" %}
     <div class="module">
         <form method="post" action="{% url 'group_order:order' order.id %}">
             {% csrf_token %}
             {{ item_formset.management_form }}
-            <table>
+            <table class="table">
+                <caption>{% trans "Items" %}</caption>
                 {% if item_formset %}
+                    <thead>
                     <tr>
-                        <td></td>
+                        <th>#</th>
                         {% for field in item_formset.0 %}
                             {% if not field.is_hidden %}
-                                <td>{{ field.label_tag }}</td>
+                                <th>{{ field.label }}</th>
                             {% endif %}
                         {% endfor %}
                     </tr>
+                    </thead>
                 {% endif %}
+                <tbody>
                 {% for form in item_formset %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
@@ -35,11 +35,13 @@
                             {% if field.is_hidden %}
                                 {{ field }}
                             {% else %}
-                                <td>{{ field }}</td>
+                                <td>{{ field|as_bootstrap }}</td>
                             {% endif %}
                         {% endfor %}
                     </tr>
                 {% endfor %}
+                </tbody>
+                <tfoot>
                 <tr>
                     <td></td>
                     <td>
@@ -53,39 +55,50 @@
                     </td>
                     <td></td>
                 </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        {% if can_save_item %}
-                            <input type="submit" value="{% trans 'Save' %}"/>
-                        {% endif %}
-                        {% if order.purchase.closed %}
-                            <ul class="errorlist">
-                                <li>{% trans "Purchase is closed." %}</li>
-                            </ul>
-                        {% endif %}
-                    </td>
-                </tr>
+                </tfoot>
             </table>
+            {% if order.purchase.closed or order.purchase.past_due %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <ul class="inline">
+                        {% if order.purchase.closed %}
+                            <li>{% trans "Purchase is closed." %}</li>
+                        {% endif %}
+                        {% if order.purchase.past_due %}
+                            <li>{% trans "Due date is in the past." %}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+            <div class="form-actions">
+                {% if can_save_item %}
+                    <input class="btn" type="submit" value="{% trans 'Save' %}"/>
+                {% else %}
+                    <a class="btn disabled">{% trans 'Save' %}</a>
+                {% endif %}
+            </div>
         </form>
     </div>
 
-    {% trans "Transfers" %}
     <div class="module">
         <form method="post" action="{% url 'group_order:order' order.id %}">
             {% csrf_token %}
             {{ transfer_formset.management_form }}
-            <table>
+            <table class="table">
+                <caption>{% trans "Transfers" %}</caption>
                 {% if transfer_formset %}
+                    <thead>
                     <tr>
-                        <td></td>
+                        <th>#</th>
                         {% for field in transfer_formset.0 %}
                             {% if not field.is_hidden %}
-                                <td>{{ field.label_tag }}</td>
+                                <th>{{ field.label }}</th>
                             {% endif %}
                         {% endfor %}
                     </tr>
+                    </thead>
                 {% endif %}
+                <tbody>
                 {% for form in transfer_formset %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
@@ -98,6 +111,8 @@
                         {% endfor %}
                     </tr>
                 {% endfor %}
+                </tbody>
+                <tfoot>
                 <tr>
                     <td></td>
                     <td>
@@ -108,15 +123,15 @@
                     </td>
                     <td></td>
                 </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        {% if can_save_transfer %}
-                            <input type="submit" value="{% trans 'Save' %}"/>
-                        {% endif %}
-                    </td>
-                </tr>
+                </tfoot>
             </table>
+            <div class="form-actions">
+                {% if can_save_transfer %}
+                    <input class="btn" type="submit" value="{% trans 'Save' %}"/>
+                {% else %}
+                    <a class="btn disabled">{% trans 'Save' %}</a>
+                {% endif %}
+            </div>
         </form>
     </div>
 {% endblock %}

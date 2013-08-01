@@ -1,5 +1,6 @@
 # Create your views here.
-from django.forms import ModelForm, ChoiceField
+from bootstrap_toolkit.widgets import BootstrapDateInput
+from django.forms import ModelForm, ChoiceField, DateField
 from django.forms.models import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -70,6 +71,8 @@ class PurchaseUpdateForm(ModelForm):
     class Meta:
         model = Purchase
         exclude = ('transferred',)
+
+    due = DateField(widget=BootstrapDateInput, label=_('due').capitalize())
 
     transfer = ChoiceField(required=False, label=_('Transfer remainder to') + ':')
 
@@ -196,7 +199,7 @@ class OrderView(UpdateView, ModelContextMixin):
 
     def update_context(self, context, obj):
         context['item_formset'] = self.ItemFormSet(instance=obj)
-        context['can_save_item'] = not obj.purchase.closed and (
+        context['can_save_item'] = not obj.purchase.closed and not obj.purchase.past_due and (
             obj.customer == self.request.user.person or self.request.user.is_staff)
         context['transfer_formset'] = self.TransferFormSet(instance=obj)
         context[

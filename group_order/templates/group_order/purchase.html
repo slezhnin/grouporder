@@ -1,6 +1,9 @@
 {% extends "group_order/base.html" %}
 {% load i18n %}
 {% load bootstrap_toolkit %}
+{% block extra_head %}
+    {{ form.media }}
+{% endblock %}
 
 {% block content %}
     {% block content_title %}{% endblock %}
@@ -44,18 +47,21 @@
             {% endif %}
         </form>
     </div>
-    {% trans 'Orders' %}
     <div class="module">
-        <table>
+        <table class="table">
+            <caption>{% trans 'Orders' %}</caption>
+            <thead>
             <tr>
-                <td></td>
-                <td>{% trans 'customer' as customer %}{{ customer|capfirst }}</td>
-                <td>{% trans 'created' as created %}{{ created|capfirst }}</td>
-                <td>{% trans 'quantity' as quantity %}{{ quantity|capfirst }}</td>
-                <td>{% trans 'amount' as amount %}{{ amount|capfirst }}</td>
-                <td>{% trans 'paid' as paid %}{{ paid|capfirst }}</td>
-                <td>{% trans 'remainder' as remainder %}{{ remainder|capfirst }}</td>
+                <th>#</th>
+                <th>{% trans 'customer' as customer %}{{ customer|capfirst }}</th>
+                <th>{% trans 'created' as created %}{{ created|capfirst }}</th>
+                <th>{% trans 'quantity' as quantity %}{{ quantity|capfirst }}</th>
+                <th>{% trans 'amount' as amount %}{{ amount|capfirst }}</th>
+                <th>{% trans 'paid' as paid %}{{ paid|capfirst }}</th>
+                <th>{% trans 'remainder' as remainder %}{{ remainder|capfirst }}</th>
             </tr>
+            </thead>
+            <tbody
             {% for o in purchase.order_set.all %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
@@ -67,6 +73,8 @@
                     <td>{{ o.remainder }}</td>
                 </tr>
             {% endfor %}
+            </tbody>
+            <tfoot>
             <tr>
                 <td></td>
                 <td>{% trans 'total' as total %}{{ total|capfirst }}</td>
@@ -76,6 +84,7 @@
                 <td>{{ purchase.paid }}</td>
                 <td>{{ purchase.remainder }}</td>
             </tr>
+            </tfoot>
         </table>
     </div>
 {% endblock %}

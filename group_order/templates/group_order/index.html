@@ -8,24 +8,29 @@
     {% trans 'amount' as amount %}
     {% trans 'paid' as paid %}
     {% trans 'remainder' as remainder %}
-    {% trans 'Purchases' %}
     {% if purchase_list %}
-        {% if filter == 'all' %}
-            <a href="{% url 'group_order:index_filter' 'my' %}">{% trans 'my' %}</a>
-        {% else %}
-            <a href="{% url 'group_order:index' %}">{% trans 'all' %}</a>
-        {% endif %}
-        <a href="{% url 'group_order:purchase_add' %}">{% trans 'add' %}</a>
-        <div class="module">
-            <table>
+        <div class="container-fluid">
+            <table class="table">
+                <caption>
+                    {% trans 'Purchases' %}
+                    {% if filter == 'all' %}
+                        <a href="{% url 'group_order:index_filter' 'my' %}">{% trans 'my' %}</a>
+                    {% else %}
+                        <a href="{% url 'group_order:index' %}">{% trans 'all' %}</a>
+                    {% endif %}
+                    <a href="{% url 'group_order:purchase_add' %}">{% trans 'add' %}</a>
+                </caption>
+                <thead>
                 <tr>
-                    <td>{{ supplier|capfirst }}</td>
-                    <td>{{ manager|capfirst }}</td>
-                    <td>{{ due|capfirst }}</td>
-                    <td>{{ amount|capfirst }}</td>
-                    <td>{{ paid|capfirst }}</td>
-                    <td>{{ remainder|capfirst }}</td>
+                    <th>{{ supplier|capfirst }}</th>
+                    <th>{{ manager|capfirst }}</th>
+                    <th>{{ due|capfirst }}</th>
+                    <th>{{ amount|capfirst }}</th>
+                    <th>{{ paid|capfirst }}</th>
+                    <th>{{ remainder|capfirst }}</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for p in purchase_list %}
                     {% url 'group_order:purchase' p.id as purchase_url %}
                     <tr>
@@ -37,23 +42,29 @@
                         <td>{{ p.remainder }}</td>
                     </tr>
                 {% endfor %}
+                </tbody>
             </table>
         </div>
     {% else %}
         <a href="{% url 'group_order:purchase_add' %}">{% trans 'add' %}</a>
     {% endif %}
     {% if my_order_list %}
-        {% trans 'My orders' %}
-        <div class="module">
-            <table>
+        <div class="container-fluid">
+            <table class="table">
+                <caption>
+                    {% trans 'My orders' %}
+                </caption>
+                <thead>
                 <tr>
-                    <td>{{ supplier|capfirst }}</td>
-                    <td>{{ manager|capfirst }}</td>
-                    <td>{{ due|capfirst }}</td>
-                    <td>{{ amount|capfirst }}</td>
-                    <td>{{ paid|capfirst }}</td>
-                    <td>{{ remainder|capfirst }}</td>
+                    <th>{{ supplier|capfirst }}</th>
+                    <th>{{ manager|capfirst }}</th>
+                    <th>{{ due|capfirst }}</th>
+                    <th>{{ amount|capfirst }}</th>
+                    <th>{{ paid|capfirst }}</th>
+                    <th>{{ remainder|capfirst }}</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for o in my_order_list %}
                     {% url 'group_order:order' o.id as order_url %}
                     <tr>
@@ -65,6 +76,7 @@
                         <td>{{ o.remainder }}</td>
                     </tr>
                 {% endfor %}
+                </tbody>
             </table>
         </div>
     {% endif %}
