@@ -95,6 +95,7 @@ class PurchaseCreate(CreateView):
         form.fields['manager'].initial = user.person
         if not user.is_staff:
             form.fields['manager'].widget.attrs['disabled'] = True
+        form.fields['due'].widget = BootstrapDateInput()
         return form
 
     def form_valid(self, form):
