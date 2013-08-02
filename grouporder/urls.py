@@ -5,7 +5,8 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-urlpatterns = patterns('',  # Examples:
+urlpatterns = patterns('',
+                       # Examples:
                        # url(r'^$', 'grouporder.views.home', name='home'),
                        # url(r'^grouporder/', include('grouporder.foo.urls')),
 
@@ -14,4 +15,5 @@ urlpatterns = patterns('',  # Examples:
 
                        # Uncomment the next line to enable the admin:
                        url(r'^admin/', include(admin.site.urls)),
-                       url(r'^purchase/', include('group_order.urls', namespace='group_order')))
+                       url(r'^purchase/', include('group_order.urls', namespace='group_order')),
+                       url(r'^', include('group_order.urls', namespace='group_order')), )
