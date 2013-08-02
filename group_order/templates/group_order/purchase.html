@@ -36,7 +36,7 @@
                         {% endif %}
                     {% endif %}
                 {% endif %}
-                {% if purchase.past_due and not purchase.closed and not has_order %}
+                {% if not purchase.past_due and not purchase.closed and not has_order %}
                     <input type="submit" name="add_order" value="{% trans 'Add order' %}"
                            class="btn btn-secondary"/>
                 {% endif %}
