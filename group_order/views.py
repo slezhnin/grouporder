@@ -204,7 +204,7 @@ class OrderView(UpdateView, ModelContextMixin):
 
     def update_context(self, context, obj):
         context['item_formset'] = self.ItemFormSet(instance=obj)
-        context['can_save_item'] = not obj.purchase.closed and not obj.purchase.past_due and (
+        context['can_save_item'] = not obj.purchase.closed and not obj.purchase.past_due() and (
             obj.customer == self.request.user.person or self.request.user.is_staff)
         context['transfer_formset'] = self.TransferFormSet(instance=obj)
         context[
