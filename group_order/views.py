@@ -1,6 +1,6 @@
 # Create your views here.
 from bootstrap_toolkit.widgets import BootstrapDateInput
-from django.forms import ModelForm, ChoiceField, DateField
+from django.forms import ModelForm, ChoiceField
 from django.forms.models import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -14,7 +14,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
-from models import Purchase, Order, Item, Transfer
+from models import Purchase, Order, Item, Transfer, Person
 
 
 def index(request):
@@ -26,10 +26,15 @@ def index_filter(request, filter):
         return views.login(request, template_name='group_order/login.html',
                            extra_context={'title': _('Group Order'),
                                           REDIRECT_FIELD_NAME: reverse('group_order:index')})
-    my_order_list = Order.objects.all().filter(customer=request.user.person).order_by('-created')
+    try:
+        person = Person.objects.get(user=request.user)
+    except Person.DoesNotExist:
+        person = None
+    my_order_list = Order.objects.all().filter(customer=person).order_by(
+        '-created') if person else ()
     purchase_list = Purchase.objects.all()
-    if filter == 'my':
-        purchase_list = purchase_list.filter(manager=request.user.person)
+    if filter == 'my' and person:
+        purchase_list = purchase_list.filter(manager=person)
     purchase_list = purchase_list.order_by('-due')
     return render(request, 'group_order/index.html',
                   {'purchase_list': purchase_list, 'my_order_list': my_order_list,

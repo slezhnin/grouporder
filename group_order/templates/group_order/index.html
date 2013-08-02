@@ -12,15 +12,22 @@
         <div class="row-fluid">
             <div class="span5">
                 {% if purchase_list %}
-                    <table class="table table-bordered">
+                    <table class="table">
                         <caption>
-                            {% trans 'Purchases' %}
-                            {% if filter == 'all' %}
-                                <a href="{% url 'group_order:index_filter' 'my' %}">{% trans 'my' %}</a>
-                            {% else %}
-                                <a href="{% url 'group_order:index' %}">{% trans 'all' %}</a>
-                            {% endif %}
-                            <a href="{% url 'group_order:purchase_add' %}">{% trans 'add' %}</a>
+                            <div class="btn-toolbar">
+                                <div class="btn-group">
+                                    <a class="btn btn-success disabled">{% trans 'Purchases' %}</a>
+                                    {% if filter == 'all' %}
+                                        <a class="btn"
+                                           href="{% url 'group_order:index_filter' 'my' %}">{% trans 'my' %}</a>
+                                    {% else %}
+                                        <a class="btn"
+                                           href="{% url 'group_order:index' %}">{% trans 'all' %}</a>
+                                    {% endif %}
+                                    <a href="{% url 'group_order:purchase_add' %}"
+                                       class="btn">{% trans 'add' %}</a>
+                                </div>
+                            </div>
                         </caption>
                         <thead>
                         <tr>
@@ -47,12 +54,18 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <a href="{% url 'group_order:purchase_add' %}">{% trans 'add' %}</a>
+                    <div class="btn-toolbar">
+                        <div class="btn-group">
+                            <a class="btn btn-warning disabled">{% trans 'Purchases' %}</a>
+                            <a href="{% url 'group_order:purchase_add' %}"
+                               class="btn">{% trans 'add' %}</a>
+                        </div>
+                    </div>
                 {% endif %}
             </div>
             <div class="span5 offset1">
                 {% if my_order_list %}
-                    <table class="table table-bordered">
+                    <table class="table">
                         <caption>
                             {% trans 'My orders' %}
                         </caption>

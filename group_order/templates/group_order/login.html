@@ -7,10 +7,14 @@
     <form action="{{ app_path }}" method="post" id="login-form" class="form-horizontal">
         {% csrf_token %}
         {{ form|as_bootstrap:'horizontal' }}
-        <input type="hidden" name="this_is_the_login_form" value="1" />
-        <input type="hidden" name="next" value="{{ next }}" />
+        <input type="hidden" name="this_is_the_login_form" value="1"/>
+        <input type="hidden" name="next" value="{{ next }}"/>
+
         <div class="form-actions">
             <input type="submit" value="{% trans 'Log in' %}" class="btn btn-primary"/>
         </div>
     </form>
+    <script type="text/javascript">
+        document.getElementById('id_username').focus()
+    </script>
 {% endblock %}
