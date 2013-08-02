@@ -74,7 +74,7 @@ class Price(models.Model):
 
     def __unicode__(self):
         return ' '.join(
-            (unicode(self.product), '| ' + unicode(_('price')) + ':', unicode(self.price)))
+            (unicode(self.product), '|', unicode(self.price)))
 
     class Meta:
         ordering = ["created"]
