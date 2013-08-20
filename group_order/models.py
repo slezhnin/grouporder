@@ -197,7 +197,7 @@ class Item(models.Model):
     order = models.ForeignKey(Order, verbose_name=_('order'))
     product = models.ForeignKey(Price, verbose_name=_('product'))
     quantity = models.IntegerField(_('quantity'))
-    price = models.FloatField(_('sum'))
+    price = models.FloatField(_('sum'), blank=True, default=0.0)
     created = models.DateTimeField(editable=False)
     updated = models.DateTimeField(editable=False)
 
