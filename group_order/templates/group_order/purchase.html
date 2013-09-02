@@ -85,4 +85,36 @@
             </tr>
         </table>
     </div>
+    <div class="module">
+        <table class="table">
+            <caption>{% trans 'Products' %}</caption>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>{% trans 'product' as product %}{{ product|capfirst }}</th>
+                <th>{% trans 'quantity' as quantity %}{{ quantity|capfirst }}</th>
+                <th>{% trans 'sum' as sum %}{{ sum|capfirst }}</th>
+            </tr>
+            </thead>
+            <tbody
+            {% for o in purchase.order_set.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href=" {% url 'group_order:order' o.id %}">{{ o.customer }}</a></td>
+                    <td>{{ o.created.date }}</td>
+                    <td>{{ o.quantity }}</td>
+                    <td>{{ o.total }}</td>
+                    <td>{{ o.paid }}</td>
+                    <td>{{ o.remainder }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tr class="info">
+                <td></td>
+                <td>{% trans 'total' as total %}{{ total|capfirst }}</td>
+                <td>{{ purchase.quantity }}</td>
+                <td>{{ purchase.total }}</td>
+            </tr>
+        </table>
+    </div>
 {% endblock %}

@@ -121,6 +121,9 @@ class Purchase(models.Model):
     def valid_to_transfer(self):
         return Purchase.objects.exclude(id=self.id).filter(closed=None)
 
+    def product_quantity_sum_report(self):
+        purchase_items = Item.objects.filter(order_in=self.order_set.all()).values("product")
+
     def transfer_remainder(self, purchase_id):
         # Check if id is valid
         transfer_to_purchase = Purchase.objects.get(id=purchase_id)
