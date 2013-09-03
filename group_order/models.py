@@ -73,8 +73,7 @@ class Price(models.Model):
     updated = models.DateTimeField(editable=False)
 
     def __unicode__(self):
-        return ' '.join(
-            (unicode(self.product), '|', unicode(self.price)))
+        return ' '.join((unicode(self.product), '|', unicode(self.price)))
 
     class Meta:
         ordering = ["created"]
@@ -120,6 +119,20 @@ class Purchase(models.Model):
 
     def valid_to_transfer(self):
         return Purchase.objects.exclude(id=self.id).filter(closed=None)
+
+    def product_quantity_report(self):
+        report = {}
+        for order in self.order_set.all():
+            for item in order.item_set.all():
+                product = report.get(item.product.product.name,
+                                     {"product": item.product.product.name, "quantity": 0,
+                                      "sum": 0.0})
+                product["quantity"] += item.quantity
+                product["sum"] += item.price
+                report[product["product"]] = product
+        report = report.values()
+        report.sort(lambda a, b: cmp(a["product"].lower(), b["product"].lower()))
+        return report
 
     def transfer_remainder(self, purchase_id):
         # Check if id is valid
