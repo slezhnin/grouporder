@@ -124,8 +124,8 @@ class Purchase(models.Model):
         report = {}
         for order in self.order_set.all():
             for item in order.item_set.all():
-                product = report.get(item.product.product.name,
-                                     {"product": item.product.product.name, "quantity": 0,
+                product = report.get(unicode(item.product.product),
+                                     {"product": unicode(item.product.product), "quantity": 0,
                                       "sum": 0.0})
                 product["quantity"] += item.quantity
                 product["sum"] += item.price
